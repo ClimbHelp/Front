@@ -4,6 +4,9 @@ import "./globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { AuthProvider } from "./contexts/AuthContext";
+import { ChatbotProvider } from "./contexts/ChatbotContext";
+import ChatBot from "./components/ChatBot";
+import StyledComponentsRegistry from "./registry";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,13 +31,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} flex flex-col min-h-screen`}>
-        <AuthProvider>
-          <Header />
-          <main className="flex-1">
-            {children}
-          </main>
-          <Footer />
-        </AuthProvider>
+        <StyledComponentsRegistry>
+          <AuthProvider>
+            <ChatbotProvider>
+              <Header />
+              <main className="flex-1">
+                {children}
+              </main>
+              <Footer />
+              <ChatBot />
+            </ChatbotProvider>
+          </AuthProvider>
+        </StyledComponentsRegistry>
       </body>
     </html>
   );

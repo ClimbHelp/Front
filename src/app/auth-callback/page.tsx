@@ -26,7 +26,8 @@ export default function AuthCallbackPage() {
         const payload = JSON.parse(atob(token.split('.')[1]));
         const userInfo = {
           username: payload.username,
-          email: payload.email
+          email: payload.email,
+          userId: payload.userId
         };
         
         // Utiliser le contexte pour se connecter
