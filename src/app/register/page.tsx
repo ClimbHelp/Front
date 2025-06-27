@@ -1,199 +1,249 @@
 'use client'
 
-import React, { useState } from "react";
-
-async function fetchRegisterData() {
-  // TODO: Implémenter la récupération des données pour l'inscription
-}
-
-function handleGoogleRegister() {
-  console.log("Google register");
-  // TODO: Rediriger vers l'authentification Google (fonctionnalité déjà existante côté backend)
-}
-
-const cardStyle: React.CSSProperties = {
-  background: '#fff',
-  borderRadius: '1.25rem',
-  boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
-  padding: '2rem',
-  width: '100%',
-  maxWidth: 400,
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-};
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '0.5rem 0.75rem',
-  border: '1px solid #ccc',
-  borderRadius: '0.5rem',
-  background: '#f7f7f7',
-  marginTop: 2,
-};
-const labelStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  fontWeight: 500,
-  fontSize: '1rem',
-  marginBottom: 8,
-};
-const buttonStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '0.75rem',
-  background: '#2563eb',
-  color: '#fff',
-  fontWeight: 600,
-  border: 'none',
-  borderRadius: '0.5rem',
-  marginTop: 12,
-  cursor: 'pointer',
-  fontSize: '1rem',
-  boxShadow: '0 2px 8px rgba(37,99,235,0.08)',
-  transition: 'background 0.2s',
-};
-const googleBtnStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '0.75rem',
-  background: '#fff',
-  color: '#222',
-  border: '1px solid #ccc',
-  borderRadius: '0.5rem',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: 8,
-  fontWeight: 500,
-  fontSize: '1rem',
-  marginTop: 0,
-  boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-  cursor: 'pointer',
-};
-const separatorStyle: React.CSSProperties = {
-  width: '100%',
-  display: 'flex',
-  alignItems: 'center',
-  margin: '1.5rem 0',
-};
-const lineStyle: React.CSSProperties = {
-  flex: 1,
-  height: 1,
-  background: '#e5e7eb',
-};
-const orStyle: React.CSSProperties = {
-  margin: '0 1rem',
-  color: '#888',
-  fontSize: '0.95rem',
-};
+import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import {
+  AuthContainer, AuthCard, AuthHeader, AuthLogo, AuthSubtitle, AuthForm, FormGroup, FormRow, FormLabel, FormInput,
+  PrimaryButton, SecondaryButton, Separator, SeparatorLine, SeparatorText, AuthFooter, AuthLink,
+  FloatingElements, FloatingElement, HoldsPattern, Hold
+} from "../components/auth/AuthStyles";
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: ""
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const floatRefs = [
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLDivElement>(null),
+  ];
+
+  // Parallaxe emojis flottants
+  useEffect(() => {
+    function handleMouseMove(e: MouseEvent) {
+      const x = e.clientX / window.innerWidth;
+      const y = e.clientY / window.innerHeight;
+      floatRefs.forEach((ref, i) => {
+        if (!ref.current) return;
+        const speed = (i + 1) * 0.3;
+        const xPos = (x - 0.5) * speed * 30;
+        const yPos = (y - 0.5) * speed * 30;
+        ref.current.style.transform = `translate(${xPos}px, ${yPos}px)`;
+      });
+    }
+    document.addEventListener('mousemove', handleMouseMove);
+    return () => document.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+    // Effacer l'erreur quand l'utilisateur modifie le formulaire
+    if (error) setError("");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const validateForm = () => {
+    // Validation du nom d'utilisateur
+    if (formData.username.length < 3) {
+      setError("Le nom d'utilisateur doit contenir au moins 3 caractères");
+      return false;
+    }
+
+    // Validation de l'email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError("Veuillez entrer une adresse email valide");
+      return false;
+    }
+
+    // Validation du mot de passe
+    if (formData.password.length < 6) {
+      setError("Le mot de passe doit contenir au moins 6 caractères");
+      return false;
+    }
+
+    // Validation de la confirmation du mot de passe
     if (formData.password !== formData.confirmPassword) {
-      alert("Les mots de passe ne correspondent pas");
+      setError("Les mots de passe ne correspondent pas");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
       return;
     }
-    // TODO: Appeler l'API d'inscription avec les données du formulaire
+
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch('http://localhost:3003/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log("Inscription réussie:", data);
+        // Rediriger vers la page de connexion avec un message de succès
+        router.push('/login?message=inscription_reussie');
+      } else {
+        setError(data.error || "Erreur lors de l'inscription");
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'inscription:", error);
+      setError("Erreur de connexion au serveur");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  const handleLoginClick = () => {
+    router.push('/login');
+  };
+
+  function handleGoogleRegister() {
+    console.log("Google register");
+    // Redirection vers l'authentification Google
+    try {
+      router.push('http://localhost:3001/auth');
+    } catch (error) {
+      console.error("Erreur lors de la redirection Google:", error);
+    }
+  }
+
   return (
-    <main style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '80vh', background: '#f3f4f6' }}>
-      <div style={cardStyle}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: 24, textAlign: 'center' }}>Inscription</h1>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 12 }}>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <label style={{ ...labelStyle, flex: 1 }}>
-              Prénom
-              <input
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-                required
-                style={inputStyle}
-              />
-            </label>
-            <label style={{ ...labelStyle, flex: 1 }}>
-              Nom
-              <input
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-                required
-                style={inputStyle}
-              />
-            </label>
+    <AuthContainer>
+      <FloatingElements>
+        <FloatingElement ref={floatRefs[0]} $top="10%" $left="12%">🧗‍♀️</FloatingElement>
+        <FloatingElement ref={floatRefs[1]} $top="70%" $right="8%">🏔️</FloatingElement>
+        <FloatingElement ref={floatRefs[2]} $bottom="15%" $left="15%">⛰️</FloatingElement>
+      </FloatingElements>
+      
+      <HoldsPattern>
+        <Hold $delay={0} />
+        <Hold $delay={0.5} />
+        <Hold $delay={1} />
+        <Hold $delay={1.5} />
+      </HoldsPattern>
+
+      <AuthCard>
+        <AuthHeader>
+          <AuthLogo>ClimbHelp</AuthLogo>
+          <AuthSubtitle>Rejoignez la communauté d'escalade</AuthSubtitle>
+        </AuthHeader>
+        
+        {error && (
+          <div style={{
+            backgroundColor: '#fee',
+            color: '#c33',
+            padding: '10px',
+            borderRadius: '5px',
+            marginBottom: '20px',
+            fontSize: '14px'
+          }}>
+            {error}
           </div>
-          <label style={labelStyle}>
-            Email
-            <input
+        )}
+        
+        <AuthForm onSubmit={handleSubmit}>
+          <FormGroup>
+            <FormLabel>Nom d'utilisateur</FormLabel>
+            <FormInput
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="Votre nom d'utilisateur"
+              required
+              minLength={3}
+            />
+          </FormGroup>
+          
+          <FormGroup>
+            <FormLabel>Email</FormLabel>
+            <FormInput
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
+              placeholder="votre@email.com"
               required
-              style={inputStyle}
             />
-          </label>
-          <label style={labelStyle}>
-            Mot de passe
-            <input
+          </FormGroup>
+          
+          <FormGroup>
+            <FormLabel>Mot de passe</FormLabel>
+            <FormInput
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
+              placeholder="Votre mot de passe"
               required
               minLength={6}
-              style={inputStyle}
             />
-          </label>
-          <label style={labelStyle}>
-            Confirmer le mot de passe
-            <input
+          </FormGroup>
+          
+          <FormGroup>
+            <FormLabel>Confirmer le mot de passe</FormLabel>
+            <FormInput
               type="password"
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
+              placeholder="Confirmez votre mot de passe"
               required
               minLength={6}
-              style={inputStyle}
             />
-          </label>
-          <button 
-            type="submit" 
-            style={buttonStyle}
-          >
-            S'inscrire
-          </button>
-        </form>
-        <div style={separatorStyle}>
-          <div style={lineStyle} />
-          <span style={orStyle}>ou</span>
-          <div style={lineStyle} />
-        </div>
-        <button 
-          onClick={handleGoogleRegister} 
-          style={googleBtnStyle}
-        >
+          </FormGroup>
+          
+          <PrimaryButton type="submit" disabled={isLoading}>
+            {isLoading ? "Création en cours..." : "Créer mon compte"}
+          </PrimaryButton>
+        </AuthForm>
+        
+        <Separator>
+          <SeparatorLine />
+          <SeparatorText>ou</SeparatorText>
+          <SeparatorLine />
+        </Separator>
+        
+        <SecondaryButton onClick={handleGoogleRegister} disabled={isLoading}>
           <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width={20} height={20} />
           S'inscrire avec Google
-        </button>
-      </div>
-    </main>
+        </SecondaryButton>
+        
+        <AuthFooter>
+          <p style={{ color: '#7f8c8d', marginBottom: '1rem' }}>
+            Déjà un compte ?
+          </p>
+          <AuthLink onClick={handleLoginClick} style={{ cursor: 'pointer' }}>
+            Se connecter
+          </AuthLink>
+        </AuthFooter>
+      </AuthCard>
+    </AuthContainer>
   );
 } 

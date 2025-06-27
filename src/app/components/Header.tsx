@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '../contexts/AuthContext';
 
 const headerStyle: React.CSSProperties = {
   background: '#f8f9fa',
@@ -21,15 +22,25 @@ const linkStyle: React.CSSProperties = {
   fontWeight: 500,
   fontSize: '1rem',
   transition: 'color 0.2s',
+  cursor: 'pointer',
 };
 const activeLinkStyle: React.CSSProperties = {
   ...linkStyle,
   color: '#2563eb',
   fontWeight: 700,
 };
+const logoutButtonStyle: React.CSSProperties = {
+  ...linkStyle,
+  background: 'none',
+  border: 'none',
+  padding: 0,
+  fontFamily: 'inherit',
+  cursor: 'pointer',
+};
 
 export default function Header() {
   const pathname = usePathname();
+  const { isAuthenticated, userInfo, logout } = useAuth();
 
   return (
     <header style={headerStyle}>
@@ -39,10 +50,29 @@ export default function Header() {
         </Link>
       </div>
       <nav style={navStyle}>
-        <Link href="/" style={pathname === '/' ? activeLinkStyle : linkStyle}>Accueil</Link>
-        <Link href="/login" style={pathname === '/login' ? activeLinkStyle : linkStyle}>Connexion</Link>
-        <Link href="/register" style={pathname === '/register' ? activeLinkStyle : linkStyle}>Inscription</Link>
-        <Link href="/profile" style={pathname === '/profile' ? activeLinkStyle : linkStyle}>Profil</Link>
+        {/* <Link href="/" style={pathname === '/' ? activeLinkStyle : linkStyle}>
+          Accueil
+        </Link> */}
+        
+        {isAuthenticated ? (
+          <>
+            <Link href="/profile" style={pathname === '/profile' ? activeLinkStyle : linkStyle}>
+              Profil {userInfo?.username && `(${userInfo.username})`}
+            </Link>
+            <button onClick={logout} style={logoutButtonStyle}>
+              Déconnexion
+            </button>
+          </>
+        ) : (
+          <>
+            <Link href="/login" style={pathname === '/login' ? activeLinkStyle : linkStyle}>
+              Connexion
+            </Link>
+            <Link href="/register" style={pathname === '/register' ? activeLinkStyle : linkStyle}>
+              Inscription
+            </Link>
+          </>
+        )}
       </nav>
     </header>
   );

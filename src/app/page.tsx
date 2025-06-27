@@ -1,10 +1,11 @@
 'use client'
 
 import React, { useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import {
   Hero, Container, HeroContent, Logo, Tagline, Desc, Stats, Stat, StatNumber, StatLabel,
   FeaturesGrid, FeatureCard, FeatureIcon, FeatureTitle, FeatureText, CtaSection, CtaButton,
-  FloatingElements, FloatingElement
+  FloatingElements, FloatingElement, HoldsPattern, Hold, SectionSubtitle
 } from "./components/landing/LandingStyles";
 
 const statsData = [
@@ -17,21 +18,22 @@ const features = [
   {
     icon: '📊',
     title: 'Suivi de progression',
-    text: 'Visualisez votre évolution avec des statistiques détaillées et un historique complet de vos ascensions.',
+    text: 'Visualisez votre évolution avec des statistiques claires et un historique détaillé de vos ascensions pour rester motivé.',
   },
   {
     icon: '🗺️',
     title: 'Recherche de salles',
-    text: 'Trouvez facilement les salles d\'escalade près de chez vous avec horaires, niveaux et informations actualisées.',
+    text: 'Trouvez facilement les salles d\'escalade près de chez vous avec informations actualisées et détails des voies disponibles.',
   },
   {
-    icon: '🎯',
-    title: 'Gestion des voies',
-    text: 'Pour les gestionnaires : mettez à jour vos voies, consultez les statistiques d\'usage et gérez votre salle efficacement.',
+    icon: '⚙️',
+    title: 'Gestion simplifiée',
+    text: 'Outils dédiés aux gestionnaires pour mettre à jour les voies, consulter les statistiques et communiquer avec les grimpeurs.',
   },
 ];
 
 export default function Home() {
+  const router = useRouter();
   const statRefs = [
     useRef<HTMLSpanElement>(null),
     useRef<HTMLSpanElement>(null),
@@ -45,21 +47,25 @@ export default function Home() {
 
   // Animation des statistiques
   useEffect(() => {
-    statRefs.forEach((ref, i) => {
-      if (!ref.current) return;
-      let current = 0;
-      const target = statsData[i].target;
-      const increment = target / 100;
-      const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-          current = target;
-          clearInterval(timer);
-        }
-        if (ref.current) ref.current.textContent = Math.floor(current).toLocaleString();
-      }, 20);
-      return () => clearInterval(timer);
-    });
+    const timer = setTimeout(() => {
+      statRefs.forEach((ref, i) => {
+        if (!ref.current) return;
+        let current = 0;
+        const target = statsData[i].target;
+        const increment = target / 60;
+        const intervalTimer = setInterval(() => {
+          current += increment;
+          if (current >= target) {
+            current = target;
+            clearInterval(intervalTimer);
+          }
+          if (ref.current) ref.current.textContent = Math.floor(current).toLocaleString();
+        }, 30);
+        return () => clearInterval(intervalTimer);
+      });
+    }, 500);
+
+    return () => clearTimeout(timer);
   }, []);
 
   // Parallaxe emojis flottants
@@ -80,23 +86,39 @@ export default function Home() {
   }, []);
 
   function handleCtaClick() {
-    alert("Bienvenue sur ClimbHelp ! 🧗‍♂️\n\nRejoignez notre communauté de grimpeurs passionnés.");
+    const button = document.querySelector('.cta-button') as HTMLElement;
+    if (button) {
+      button.style.transform = 'scale(0.98)';
+      setTimeout(() => {
+        button.style.transform = 'scale(1)';
+        alert('Bienvenue sur ClimbHelp ! 🧗‍♂️\n\nDécouvrez une nouvelle façon de vivre votre passion de l\'escalade.');
+      }, 150);
+    }
+  }
+
+  function handleRegisterClick() {
+    router.push('/register');
   }
 
   return (
     <Hero>
       <FloatingElements>
-        <FloatingElement ref={floatRefs[0]} $top="20%" $left="10%">🧗‍♂️</FloatingElement>
-        <FloatingElement ref={floatRefs[1]} $top="60%" $right="15%">⛰️</FloatingElement>
-        <FloatingElement ref={floatRefs[2]} $bottom="30%" $left="20%">🏔️</FloatingElement>
+        <FloatingElement ref={floatRefs[0]} $top="20%" $right="5%">🧗‍♂️</FloatingElement>
       </FloatingElements>
+      
+      <HoldsPattern>
+        <Hold $delay={0} />
+        <Hold $delay={0.5} />
+        <Hold $delay={1} />
+        <Hold $delay={1.5} />
+      </HoldsPattern>
+
       <Container>
         <HeroContent>
           <Logo>ClimbHelp</Logo>
           <Tagline>Votre compagnon d'escalade intelligent</Tagline>
           <Desc>
-            Centralisez vos informations d'escalade, suivez votre progression et découvrez de nouvelles voies.<br />
-            La plateforme qui connecte grimpeurs et salles d'escalade pour une expérience optimisée.
+            Suivez votre progression, découvrez de nouvelles voies et connectez-vous avec votre communauté d'escalade. La plateforme qui simplifie la gestion des salles et accompagne les grimpeurs.
           </Desc>
           <Stats>
             {statsData.map((stat, i) => (
@@ -106,9 +128,12 @@ export default function Home() {
               </Stat>
             ))}
           </Stats>
+          
+          <SectionSubtitle>Fonctionnalités principales</SectionSubtitle>
+          
           <FeaturesGrid>
             {features.map((f, i) => (
-              <FeatureCard key={f.title}>
+              <FeatureCard key={f.title} style={{ animationDelay: `${i * 0.1}s` }}>
                 <FeatureIcon>{f.icon}</FeatureIcon>
                 <FeatureTitle>{f.title}</FeatureTitle>
                 <FeatureText>{f.text}</FeatureText>
@@ -116,8 +141,8 @@ export default function Home() {
             ))}
           </FeaturesGrid>
           <CtaSection>
-            <CtaButton onClick={handleCtaClick}>
-              Commencer l'aventure
+            <CtaButton onClick={handleRegisterClick} className="cta-button">
+              Inscris-toi maintenant !
             </CtaButton>
           </CtaSection>
         </HeroContent>

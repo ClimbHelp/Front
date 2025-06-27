@@ -40,7 +40,7 @@ export default function Footer() {
         <div style={sectionStyle}>
           <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.2rem', fontWeight: 700 }}>ClimbHelp</h3>
           <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.8 }}>
-            © 2024 Tous droits réservés
+            © 2025 Tous droits réservés
           </p>
         </div>
         <div style={{ display: 'flex', gap: '2rem' }}>
