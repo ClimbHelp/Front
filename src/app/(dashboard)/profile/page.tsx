@@ -6,9 +6,9 @@ import {
   ProfileContainer, ProfileContent, ProfileHeader, ProfileAvatar, ProfileName, ProfileEmail, ProfileStats,
   ProfileStat, ProfileStatNumber, ProfileStatLabel, ProfileSection, ProfileSectionTitle, ProfileGrid,
   ProfileCard, ProfileCardTitle, ProfileCardValue, LogoutButton, FloatingElements, FloatingElement, HoldsPattern, Hold
-} from "../components/auth/AuthStyles";
-import ProtectedRoute from "../components/ProtectedRoute";
-import { useAuth } from "../contexts/AuthContext";
+} from "../../components/auth/AuthStyles";
+import ProtectedRoute from "../../components/ProtectedRoute";
+import { useAuth } from "../../contexts/AuthContext";
 
 async function fetchProfileData() {
   // TODO: Implémenter la récupération des données du profil utilisateur

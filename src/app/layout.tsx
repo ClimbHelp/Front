@@ -34,11 +34,11 @@ export default function RootLayout({
         <StyledComponentsRegistry>
           <AuthProvider>
             <ChatbotProvider>
-              <Header />
+              {/* <Header /> */}
               <main className="flex-1">
                 {children}
               </main>
-              <Footer />
+              {/* <Footer /> */}
               <ChatBot />
             </ChatbotProvider>
           </AuthProvider>

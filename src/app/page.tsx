@@ -1,160 +1,132 @@
 'use client'
 
-import React, { useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import {
-  Hero, Container, HeroContent, Logo, Tagline, Desc, Stats, Stat, StatNumber, StatLabel,
-  FeaturesGrid, FeatureCard, FeatureIcon, FeatureTitle, FeatureText, CtaSection, CtaButton,
-  FloatingElements, FloatingElement, HoldsPattern, Hold, SectionSubtitle
-} from "./components/landing/LandingStyles";
+import Link from 'next/link';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import Button from '@/components/ui/Button';
+import styles from './page.module.css';
 
-const statsData = [
-  { target: 100, label: 'Salles partenaires' },
-  { target: 5000, label: 'Voies référencées' },
-  { target: 1200, label: 'Grimpeurs actifs' },
-];
-
-const features = [
-  {
-    icon: '📊',
-    title: 'Suivi de progression',
-    text: 'Visualisez votre évolution avec des statistiques claires et un historique détaillé de vos ascensions pour rester motivé.',
-  },
-  {
-    icon: '🗺️',
-    title: 'Recherche de salles',
-    text: 'Trouvez facilement les salles d\'escalade près de chez vous avec informations actualisées et détails des voies disponibles.',
-  },
-  {
-    icon: '⚙️',
-    title: 'Gestion simplifiée',
-    text: 'Outils dédiés aux gestionnaires pour mettre à jour les voies, consulter les statistiques et communiquer avec les grimpeurs.',
-  },
-];
-
-export default function Home() {
-  const router = useRouter();
-  const statRefs = [
-    useRef<HTMLSpanElement>(null),
-    useRef<HTMLSpanElement>(null),
-    useRef<HTMLSpanElement>(null),
-  ];
-  const floatRefs = [
-    useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
-  ];
-
-  // Animation des statistiques
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      statRefs.forEach((ref, i) => {
-        if (!ref.current) return;
-        let current = 0;
-        const target = statsData[i].target;
-        const increment = target / 60;
-        const intervalTimer = setInterval(() => {
-          current += increment;
-          if (current >= target) {
-            current = target;
-            clearInterval(intervalTimer);
-          }
-          if (ref.current) ref.current.textContent = Math.floor(current).toLocaleString();
-        }, 30);
-        return () => clearInterval(intervalTimer);
-      });
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Parallaxe emojis flottants
-  useEffect(() => {
-    function handleMouseMove(e: MouseEvent) {
-      const x = e.clientX / window.innerWidth;
-      const y = e.clientY / window.innerHeight;
-      floatRefs.forEach((ref, i) => {
-        if (!ref.current) return;
-        const speed = (i + 1) * 0.5;
-        const xPos = (x - 0.5) * speed * 50;
-        const yPos = (y - 0.5) * speed * 50;
-        ref.current.style.transform = `translate(${xPos}px, ${yPos}px)`;
-      });
-    }
-    document.addEventListener('mousemove', handleMouseMove);
-    return () => document.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
-  function handleCtaClick() {
-    const button = document.querySelector('.cta-button') as HTMLElement;
-    if (button) {
-      button.style.transform = 'scale(0.98)';
-      setTimeout(() => {
-        button.style.transform = 'scale(1)';
-        alert('Bienvenue sur ClimbHelp ! 🧗‍♂️\n\nDécouvrez une nouvelle façon de vivre votre passion de l\'escalade.');
-      }, 150);
-    }
-  }
-
-  function handleRegisterClick() {
-    router.push('/register');
-  }
-
+export default function HomePage() {
   return (
-    <Hero>
-      <FloatingElements>
-        <FloatingElement ref={floatRefs[0]} $top="20%" $right="5%">🧗‍♂️</FloatingElement>
-      </FloatingElements>
-      
-      <HoldsPattern>
-        <Hold $delay={0} />
-        <Hold $delay={0.5} />
-        <Hold $delay={1} />
-        <Hold $delay={1.5} />
-      </HoldsPattern>
+    <>
+      <Header />
+      <main className={styles.main}>
+        {/* Hero Section */}
+        <section className={styles.hero}>
+          <div className={styles.heroContent}>
+            <h1 className={styles.heroTitle}>
+              Votre compagnon d'escalade
+            </h1>
+            <p className={styles.heroSubtitle}>
+              Suivez votre progression, découvrez de nouvelles voies et connectez-vous avec la communauté d'escalade
+            </p>
+            <div className={styles.heroActions}>
+              <Link href="/register">
+                <Button variant="primary" size="lg">
+                  Commencer gratuitement
+                </Button>
+              </Link>
+              <Link href="/payment">
+                <Button variant="outline" size="lg">
+                  Acheter ClimbHelp
+                </Button>
+              </Link>
+            </div>
+          </div>
+          <div className={styles.heroImage}>
+            <div className={styles.placeholderImage}>
+              🧗‍♂️
+            </div>
+          </div>
+        </section>
 
-      <Container>
-        <HeroContent>
-          <Logo>ClimbHelp</Logo>
-          <Tagline>Votre compagnon d'escalade intelligent</Tagline>
-          <Desc>
-            Suivez votre progression, découvrez de nouvelles voies et connectez-vous avec votre communauté d'escalade. La plateforme qui simplifie la gestion des salles et accompagne les grimpeurs.
-          </Desc>
-          <Stats>
-            {statsData.map((stat, i) => (
-              <Stat key={stat.label}>
-                <StatNumber ref={statRefs[i]}>0</StatNumber>
-                <StatLabel>{stat.label}</StatLabel>
-              </Stat>
-            ))}
-          </Stats>
-          
-          <SectionSubtitle>Fonctionnalités principales</SectionSubtitle>
-          
-          <FeaturesGrid>
-            {features.map((f, i) => (
-              <FeatureCard key={f.title} style={{ animationDelay: `${i * 0.1}s` }}>
-                <FeatureIcon>{f.icon}</FeatureIcon>
-                <FeatureTitle>{f.title}</FeatureTitle>
-                <FeatureText>{f.text}</FeatureText>
-              </FeatureCard>
-            ))}
-          </FeaturesGrid>
-          <CtaSection>
-            <CtaButton onClick={handleRegisterClick} className="cta-button">
-              Inscris-toi maintenant !
-            </CtaButton>
-          </CtaSection>
-        </HeroContent>
-      </Container>
-    </Hero>
+        {/* Features Section */}
+        <section className={styles.features} id="fonctionnalites">
+          <div className={styles.container}>
+            <h2 className={styles.sectionTitle}>Fonctionnalités principales</h2>
+            <div className={styles.featuresGrid}>
+              <div className={styles.featureCard}>
+                <div className={styles.featureIcon}>📊</div>
+                <h3>Suivi de progression</h3>
+                <p>Enregistrez vos ascensions et suivez votre évolution dans le temps</p>
+              </div>
+              
+              <div className={styles.featureCard}>
+                <div className={styles.featureIcon}>🗺️</div>
+                <h3>Découverte de salles</h3>
+                <p>Trouvez de nouvelles salles d'escalade près de chez vous</p>
+              </div>
+              
+              <div className={styles.featureCard}>
+                <div className={styles.featureIcon}>👥</div>
+                <h3>Communauté</h3>
+                <p>Connectez-vous avec d'autres grimpeurs et partagez vos expériences</p>
+              </div>
+              
+              <div className={styles.featureCard}>
+                <div className={styles.featureIcon}>🤖</div>
+                <h3>Assistant IA</h3>
+                <p>Obtenez des conseils personnalisés grâce à notre chatbot intelligent</p>
+              </div>
+              
+              <div className={styles.featureCard}>
+                <div className={styles.featureIcon}>📈</div>
+                <h3>Statistiques avancées</h3>
+                <p>Analysez vos performances avec des graphiques détaillés</p>
+              </div>
+              
+              <div className={styles.featureCard}>
+                <div className={styles.featureIcon}>🔔</div>
+                <h3>Notifications</h3>
+                <p>Restez informé des nouvelles voies et événements</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className={styles.cta}>
+          <div className={styles.container}>
+            <h2>Prêt à commencer votre aventure ?</h2>
+            <p>Rejoignez des milliers de grimpeurs qui utilisent déjà ClimbHelp</p>
+            <div className={styles.ctaActions}>
+              <Link href="/register">
+                <Button variant="primary" size="lg">
+                  Créer un compte
+                </Button>
+              </Link>
+              <Link href="/payment">
+                <Button variant="outline" size="lg">
+                  Voir les prix
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Contact Section */}
+        <section className={styles.contact} id="contact">
+          <div className={styles.container}>
+            <h2>Contactez-nous</h2>
+            <p>Des questions ? Nous sommes là pour vous aider</p>
+            <div className={styles.contactInfo}>
+              <div className={styles.contactItem}>
+                <span className={styles.contactIcon}>📧</span>
+                <span>contact@climbhelp.com</span>
+              </div>
+              <div className={styles.contactItem}>
+                <span className={styles.contactIcon}>📱</span>
+                <span>+33 1 23 45 67 89</span>
+              </div>
+              <div className={styles.contactItem}>
+                <span className={styles.contactIcon}>📍</span>
+                <span>Paris, France</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </>
   );
 }
-
-// export default function Home() {
-//   return (
-//     <div className="bg-red-500 text-white p-8 rounded-xl">
-//       Test Tailwind
-//     </div>
-//   );
-// }

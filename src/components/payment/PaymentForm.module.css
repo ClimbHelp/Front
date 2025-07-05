@@ -1,0 +1,146 @@
+.purchaseForm {
+  background: white;
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
+
+.formTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formLabel {
+  display: block;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.formInput {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: #e74c3c;
+}
+
+.formInput.error {
+  border-color: #e74c3c;
+}
+
+.errorText {
+  color: #e74c3c;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+}
+
+.paymentMethods {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.paymentMethod {
+  flex: 1;
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.paymentMethod:hover {
+  border-color: #e74c3c;
+}
+
+.paymentMethod.active {
+  border-color: #e74c3c;
+  background: #fdf2f2;
+}
+
+.paymentIcon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.cardDetails {
+  margin-bottom: 1.5rem;
+}
+
+.securityInfo {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.securityIcon {
+  color: #27ae60;
+  font-size: 1.2rem;
+}
+
+.securityText {
+  font-size: 0.9rem;
+  color: #5a6c7d;
+}
+
+.purchaseButton {
+  width: 100%;
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+  padding: 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.2rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.purchaseButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #c0392b, #a93226);
+  transform: translateY(-2px);
+}
+
+.purchaseButton:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 768px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .paymentMethods {
+    flex-direction: column;
+  }
+} 

@@ -1,0 +1,120 @@
+.productInfo {
+  background: white;
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  height: fit-content;
+}
+
+.productTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.productDescription {
+  color: #5a6c7d;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.priceSection {
+  text-align: center;
+  margin: 2rem 0;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-radius: 12px;
+  border-left: 4px solid #e74c3c;
+}
+
+.priceLabel {
+  font-size: 1rem;
+  color: #7f8c8d;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+.priceAmount {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.priceCurrency {
+  font-size: 2rem;
+  color: #7f8c8d;
+}
+
+.priceNote {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  margin-top: 0.5rem;
+}
+
+.featuresSection {
+  margin: 2rem 0;
+}
+
+.featuresTitle {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.featuresList {
+  list-style: none;
+}
+
+.featuresList li {
+  padding: 0.8rem 0;
+  color: #5a6c7d;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.featuresList li:last-child {
+  border-bottom: none;
+}
+
+.featuresList li::before {
+  content: '✓';
+  color: #27ae60;
+  font-weight: bold;
+  margin-right: 1rem;
+  font-size: 1.2rem;
+  width: 20px;
+  text-align: center;
+}
+
+.guaranteeSection {
+  text-align: center;
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.guaranteeTitle {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.guaranteeText {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+@media (max-width: 768px) {
+  .priceAmount {
+    font-size: 2.5rem;
+  }
+} 
