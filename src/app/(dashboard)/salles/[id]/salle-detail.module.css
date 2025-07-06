@@ -1,0 +1,314 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.header {
+  margin-bottom: 3rem;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  transition: color 0.3s ease;
+}
+
+.backLink:hover {
+  color: #1d4ed8;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 0.5rem 0;
+}
+
+.location {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0;
+}
+
+.description {
+  background: #f8f9fa;
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.description h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 1rem 0;
+}
+
+.description p {
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.mapSection {
+  background: none;
+  padding: 0;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.mapSection h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 1rem 0;
+}
+
+.mapContainer {
+  width: 100%;
+  height: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  background: none;
+  display: flex;
+}
+
+.leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 300px;
+  border-radius: 12px;
+  background: #e5e7eb;
+  z-index: 1;
+}
+
+
+
+.contactSection {
+  background: #f8f9fa;
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.contactSection h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 1rem 0;
+}
+
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+}
+
+.contactLabel {
+  font-weight: 600;
+  color: #555;
+  margin-right: 0.5rem;
+  min-width: 100px;
+}
+
+.contactLink {
+  color: #2563eb;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.contactLink:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+.voiesSection {
+  margin-top: 3rem;
+}
+
+.voiesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.voiesHeader h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+.filterContainer {
+  display: flex;
+  align-items: center;
+}
+
+.filterSelect {
+  padding: 0.75rem 1rem;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s ease;
+  background: white;
+}
+
+.filterSelect:focus {
+  border-color: #2563eb;
+}
+
+.voiesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.voieCard {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #e1e5e9;
+}
+
+.voieCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.voieHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.voieName {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+.difficulty {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.voieInfo {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.infoLabel {
+  font-weight: 600;
+  color: #555;
+  margin-right: 0.5rem;
+  min-width: 80px;
+}
+
+.infoValue {
+  color: #333;
+}
+
+.voieDescription {
+  color: #666;
+  line-height: 1.6;
+  margin: 1rem 0 0 0;
+  font-size: 0.9rem;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+  padding: 3rem;
+}
+
+.error {
+  background: #fef2f2;
+  color: #dc2626;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.backButton {
+  display: inline-block;
+  background: #2563eb;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+.backButton:hover {
+  background: #1d4ed8;
+}
+
+.noVoies {
+  text-align: center;
+  color: #666;
+  font-size: 1.1rem;
+  padding: 3rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .title {
+    font-size: 2rem;
+  }
+  
+  .voiesHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .voiesGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .voieCard {
+    padding: 1rem;
+  }
+  
+  .voieHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+} 

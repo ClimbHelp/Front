@@ -3,75 +3,42 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../../app/contexts/AuthContext';
-
-const headerStyle: React.CSSProperties = {
-  background: '#f8f9fa',
-  padding: '1rem 2rem',
-  borderBottom: '1px solid #e9ecef',
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-};
-const navStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: '2rem',
-};
-const linkStyle: React.CSSProperties = {
-  textDecoration: 'none',
-  color: '#666',
-  fontWeight: 500,
-  fontSize: '1rem',
-  transition: 'color 0.2s',
-  cursor: 'pointer',
-};
-const activeLinkStyle: React.CSSProperties = {
-  ...linkStyle,
-  color: '#2563eb',
-  fontWeight: 700,
-};
-const logoutButtonStyle: React.CSSProperties = {
-  ...linkStyle,
-  background: 'none',
-  border: 'none',
-  padding: 0,
-  fontFamily: 'inherit',
-  cursor: 'pointer',
-};
+import styles from './Header.module.css';
 
 export default function Header() {
   const pathname = usePathname();
   const { isAuthenticated, userInfo, logout } = useAuth();
 
   return (
-    <header style={headerStyle}>
+    <header className={styles.header}>
       <div>
-        <Link href="/" style={{ textDecoration: 'none', color: '#333', fontSize: '1.5rem', fontWeight: 'bold' }}>
+        <Link href="/" className={styles.logo}>
           ClimbHelp
         </Link>
       </div>
-      <nav style={navStyle}>
-        {/* <Link href="/" style={pathname === '/' ? activeLinkStyle : linkStyle}>
-          Accueil
-        </Link> */}
+      <nav className={styles.nav}>
         
         {isAuthenticated ? (
           <>
-            <Link href="/profile" style={pathname === '/profile' ? activeLinkStyle : linkStyle}>
+            <Link href="/salles" className={pathname === '/salles' ? styles.activeLink : styles.link}>
+              Salles
+            </Link>
+            <Link href="/profile" className={pathname === '/profile' ? styles.activeLink : styles.link}>
               Profil {userInfo?.username && `(${userInfo.username})`}
             </Link>
-            <Link href="/payment" style={pathname === '/payment' ? activeLinkStyle : linkStyle}>
+            <Link href="/payment" className={pathname === '/payment' ? styles.activeLink : styles.link}>
               Paiement
             </Link>
-            <button onClick={logout} style={logoutButtonStyle}>
+            <button onClick={logout} className={styles.logoutButton}>
               Déconnexion
             </button>
           </>
         ) : (
           <>
-            <Link href="/login" style={pathname === '/login' ? activeLinkStyle : linkStyle}>
+            <Link href="/login" className={pathname === '/login' ? styles.activeLink : styles.link}>
               Connexion
             </Link>
-            <Link href="/register" style={pathname === '/register' ? activeLinkStyle : linkStyle}>
+            <Link href="/register" className={pathname === '/register' ? styles.activeLink : styles.link}>
               Inscription
             </Link>
           </>

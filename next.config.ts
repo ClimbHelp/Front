@@ -11,6 +11,7 @@ const nextConfig = {
       },
     ],
   },
+
   // Optimisations pour la production
   compress: true,
   // Configuration des headers de sécurité

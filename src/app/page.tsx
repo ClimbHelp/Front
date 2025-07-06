@@ -105,7 +105,7 @@ export default function HomePage() {
         </section>
 
         {/* Contact Section */}
-        <section className={styles.contact} id="contact">
+        {/* <section className={styles.contact} id="contact">
           <div className={styles.container}>
             <h2>Contactez-nous</h2>
             <p>Des questions ? Nous sommes là pour vous aider</p>
@@ -124,7 +124,7 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-        </section>
+        </section> */}
       </main>
       <Footer />
     </>
