@@ -1,12 +1,13 @@
 'use client'
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '../../app/contexts/AuthContext';
 import styles from './Header.module.css';
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const { isAuthenticated, userInfo, logout } = useAuth();
 
   return (
@@ -23,13 +24,19 @@ export default function Header() {
             <Link href="/salles" className={pathname === '/salles' ? styles.activeLink : styles.link}>
               Salles
             </Link>
-            <Link href="/profile" className={pathname === '/profile' ? styles.activeLink : styles.link}>
-              Profil {userInfo?.username && `(${userInfo.username})`}
-            </Link>
             <Link href="/payment" className={pathname === '/payment' ? styles.activeLink : styles.link}>
               Paiement
             </Link>
-            <button onClick={logout} className={styles.logoutButton}>
+            <Link href="/profile" className={pathname === '/profile' ? styles.activeLink : styles.link}>
+              Profil {userInfo?.username && `(${userInfo.username})`}
+            </Link>
+            <button 
+              onClick={() => {
+                logout();
+                router.push('/');
+              }} 
+              className={styles.logoutButton}
+            >
               Déconnexion
             </button>
           </>

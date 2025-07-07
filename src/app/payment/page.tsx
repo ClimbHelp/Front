@@ -7,6 +7,8 @@ import PaymentHeader from '@/components/payment/PaymentHeader';
 import { PurchaseFormData } from '@/types/payment';
 import { SUCCESS_MESSAGE, ERROR_MESSAGE } from '@/lib/payment-config';
 import styles from './payment.module.css';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 
 export default function PaymentPage() {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -29,12 +31,13 @@ export default function PaymentPage() {
 
   return (
     <>
-      <PaymentHeader />
+      <Header />
       <div className={styles.container}>
         <div className={styles.header}>
           <h1 className={styles.title}>Achetez ClimbHelp</h1>
           <p className={styles.subtitle}>
-            Un seul achat pour accéder à vie à toutes les fonctionnalités de ClimbHelp
+            {/* Un seul achat pour accéder à vie à toutes les fonctionnalités de ClimbHelp */}
+            TODO: Problème de paiement avec Stripe, besoin de revoir l'intégration et le processus du service
           </p>
         </div>
 
@@ -43,6 +46,7 @@ export default function PaymentPage() {
           <PaymentForm onSubmit={handlePurchase} isProcessing={isProcessing} />
         </div>
       </div>
+      <Footer />
     </>
   );
 }

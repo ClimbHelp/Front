@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClimbHelp - Nouvelle séance</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+            text-decoration: none;
+        }
+
+        .logo::after {
+            content: '';
+            display: block;
+            width: 30px;
+            height: 3px;
+            background: linear-gradient(90deg, #e74c3c, #f39c12);
+            margin-top: 2px;
+            border-radius: 2px;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .session-form {
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            height: fit-content;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .voies-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .voie-item {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #e74c3c;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            animation: slideInLeft 0.3s ease-out;
+        }
+
+        .voie-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .voie-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .voie-select {
+            flex: 1;
+            margin-right: 1rem;
+        }
+
+        .remove-voie {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .remove-voie:hover {
+            background: #c0392b;
+            transform: scale(1.1);
+        }
+
+        .success-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-checkbox input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .success-label {
+            font-weight: 600;
+            color: #27ae60;
+            cursor: pointer;
+        }
+
+        .buttons-section {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #c0392b, #a93226);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #e74c3c;
+            border: 2px solid #e74c3c;
+        }
+
+        .btn-secondary:hover {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .route-preview {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 120px;
+            height: fit-content;
+        }
+
+        .preview-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .route-card {
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .route-card.selected {
+            border-color: #e74c3c;
+            background: #fdf2f2;
+        }
+
+        .route-grade {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: white;
+            text-align: center;
+        }
+
+        .grade-6c { background: #f39c12; }
+        .grade-5a { background: #27ae60; }
+        .grade-7a { background: #e74c3c; }
+        .grade-4c { background: #3498db; }
+
+        .route-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .route-info {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .route-type {
+            display: inline-block;
+            background: #ecf0f1;
+            color: #7f8c8d;
+            padding: 0.2rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #bdc3c7;
+            font-style: italic;
+            padding: 2rem;
+        }
+
+        .session-stats {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #e74c3c;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .route-preview {
+                position: static;
+                order: -1;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .buttons-section {
+                flex-direction: column;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <a href="#" class="logo">ClimbHelp</a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Nouvelle séance dans la salle 15</h1>
+            <p class="page-subtitle">Enregistrez votre session d'escalade du 07/07/2025</p>
+        </div>
+
+        <div class="content-grid">
+            <div class="session-form">
+                <form id="sessionForm">
+                    <div class="form-section">
+                        <h2 class="section-title">📅 Informations de la séance</h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="sessionDate">Date de la séance</label>
+                                <input type="date" id="sessionDate" class="form-input" value="2025-07-07" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="sessionDuration">Durée (heures)</label>
+                                <input type="number" id="sessionDuration" class="form-input" min="0.5" max="8" step="0.5" placeholder="2.5">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="sessionNotes">Avis sur la séance</label>
+                            <textarea id="sessionNotes" class="form-textarea" placeholder="Comment s'est passée votre séance ? Ressenti général, points à améliorer..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2 class="section-title">🧗‍♂️ Voies réalisées</h2>
+                        
+                        <div class="voies-section" id="voiesContainer">
+                            <div class="voie-item">
+                                <div class="voie-header">
+                                    <select class="form-select voie-select" onchange="updatePreview(this)">
+                                        <option value="">Sélectionner une voie...</option>
+                                        <option value="precisement" data-grade="6c" data-setter="Camille Leroy" data-type="Dévers">précisément (6c)</option>
+                                        <option value="equilibre" data-grade="5a" data-setter="Marc Dubois" data-type="Dalle">L'Équilibre (5a)</option>
+                                        <option value="defi" data-grade="7a" data-setter="Sophie Martin" data-type="Surplomb">Le Défi (7a)</option>
+                                        <option value="initiation" data-grade="4c" data-setter="Paul Berger" data-type="Verticale">Initiation (4c)</option>
+                                    </select>
+                                    <button type="button" class="remove-voie" onclick="removeVoie(this)" title="Supprimer cette voie">×</button>
+                                </div>
+
+                                <div class="success-checkbox">
+                                    <input type="checkbox" id="success_1" onchange="updateStats()">
+                                    <label for="success_1" class="success-label">✓ Voie réussie</label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Avis sur la voie</label>
+                                    <textarea class="form-textarea" placeholder="Vos impressions sur cette voie..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-secondary" onclick="addVoie()">
+                            + Ajouter une voie
+                        </button>
+                    </div>
+
+                    <div class="buttons-section">
+                        <button type="submit" class="btn btn-primary">
+                            Créer la séance
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="route-preview">
+                <h3 class="preview-title">🎯 Aperçu de la voie</h3>
+                <div id="routePreviewContent">
+                    <div class="empty-state">
+                        Sélectionnez une voie pour voir les détails
+                    </div>
+                </div>
+
+                <div class="session-stats">
+                    <h4 style="color: #2c3e50; margin-bottom: 1rem; text-align: center;">Statistiques de la séance</h4>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-number" id="totalRoutes">0</span>
+                            <span class="stat-label">Voies tentées</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="successfulRoutes">0</span>
+                            <span class="stat-label">Voies réussies</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let voieCounter = 1;
+
+        const routesData = {
+            'precisement': {
+                name: 'précisément',
+                grade: '6c',
+                setter: 'Camille Leroy',
+                type: 'Dévers',
+                description: 'Voie technique nécessitant une bonne lecture des prises'
+            },
+            'equilibre': {
+                name: 'L\'Équilibre',
+                grade: '5a',
+                setter: 'Marc Dubois',
+                type: 'Dalle',
+                description: 'Parfaite pour travailler l\'équilibre et la précision des pieds'
+            },
+            'defi': {
+                name: 'Le Défi',
+                grade: '7a',
+                setter: 'Sophie Martin',
+                type: 'Surplomb',
+                description: 'Voie physique avec des mouvements explosifs'
+            },
+            'initiation': {
+                name: 'Initiation',
+                grade: '4c',
+                setter: 'Paul Berger',
+                type: 'Verticale',
+                description: 'Idéale pour débuter, prises généreuses'
+            }
+        };
+
+        function updatePreview(selectElement) {
+            const routeId = selectElement.value;
+            const previewContent = document.getElementById('routePreviewContent');
+            
+            if (!routeId) {
+                previewContent.innerHTML = '<div class="empty-state">Sélectionnez une voie pour voir les détails</div>';
+                return;
+            }
+
+            const route = routesData[routeId];
+            previewContent.innerHTML = `
+                <div class="route-card selected">
+                    <div class="route-grade grade-${route.grade.toLowerCase()}">${route.grade}</div>
+                    <div class="route-name">${route.name}</div>
+                    <div class="route-info">👤 Ouvreur: ${route.setter}</div>
+                    <div class="route-info">📍 ${route.description}</div>
+                    <div class="route-type">${route.type}</div>
+                </div>
+            `;
+            
+            updateStats();
+        }
+
+        function addVoie() {
+            voieCounter++;
+            const voiesContainer = document.getElementById('voiesContainer');
+            const newVoie = document.createElement('div');
+            newVoie.className = 'voie-item';
+            newVoie.innerHTML = `
+                <div class="voie-header">
+                    <select class="form-select voie-select" onchange="updatePreview(this)">
+                        <option value="">Sélectionner une voie...</option>
+                        <option value="precisement" data-grade="6c" data-setter="Camille Leroy" data-type="Dévers">précisément (6c)</option>
+                        <option value="equilibre" data-grade="5a" data-setter="Marc Dubois" data-type="Dalle">L'Équilibre (5a)</option>
+                        <option value="defi" data-grade="7a" data-setter="Sophie Martin" data-type="Surplomb">Le Défi (7a)</option>
+                        <option value="initiation" data-grade="4c" data-setter="Paul Berger" data-type="Verticale">Initiation (4c)</option>
+                    </select>
+                    <button type="button" class="remove-voie" onclick="removeVoie(this)" title="Supprimer cette voie">×</button>
+                </div>
+
+                <div class="success-checkbox">
+                    <input type="checkbox" id="success_${voieCounter}" onchange="updateStats()">
+                    <label for="success_${voieCounter}" class="success-label">✓ Voie réussie</label>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Avis sur la voie</label>
+                    <textarea class="form-textarea" placeholder="Vos impressions sur cette voie..."></textarea>
+                </div>
+            `;
+            voiesContainer.appendChild(newVoie);
+            updateStats();
+        }
+
+        function removeVoie(button) {
+            const voieItem = button.closest('.voie-item');
+            const voiesContainer = document.getElementById('voiesContainer');
+            
+            if (voiesContainer.children.length > 1) {
+                voieItem.remove();
+                updateStats();
+                
+                // Reset preview if this was the selected route
+                const previewContent = document.getElementById('routePreviewContent');
+                previewContent.innerHTML = '<div class="empty-state">Sélectionnez une voie pour voir les détails</div>';
+            } else {
+                alert('Vous devez garder au moins une voie dans votre séance.');
+            }
+        }
+
+        function updateStats() {
+            const voieItems = document.querySelectorAll('.voie-item');
+            const successCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            
+            document.getElementById('totalRoutes').textContent = voieItems.length;
+            document.getElementById('successfulRoutes').textContent = successCheckboxes.length;
+        }
+
+        document.getElementById('sessionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const voies = [];
+            
+            document.querySelectorAll('.voie-item').forEach((item, index) => {
+                const select = item.querySelector('.voie-select');
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                const textarea = item.querySelector('textarea');
+                
+                if (select.value) {
+                    voies.push({
+                        voie: select.value,
+                        reussie: checkbox.checked,
+                        avis: textarea.value
+                    });
+                }
+            });
+
+            if (voies.length === 0) {
+                alert('Veuillez sélectionner au moins une voie pour votre séance.');
+                return;
+            }
+
+            // Simulation de l'envoi
+            alert(`🎉 Séance créée avec succès !\n\n📊 Récapitulatif :\n• ${voies.length} voie(s) tentée(s)\n• ${voies.filter(v => v.reussie).length} voie(s) réussie(s)\n• Date : ${document.getElementById('sessionDate').value}\n\nVotre progression a été enregistrée !`);
+        });
+
+        // Initialisation
+        updateStats();
+    </script>
+</body>
+</html>

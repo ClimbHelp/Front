@@ -1,4 +1,7 @@
+
 'use client'
+export const dynamic = "force-dynamic";
+
 
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -10,26 +13,105 @@ import {
 import ProtectedRoute from "../../components/ProtectedRoute";
 import { useAuth } from "../../contexts/AuthContext";
 
-async function fetchProfileData() {
-  // TODO: Implémenter la récupération des données du profil utilisateur
-  return {
-    stats: {
-      totalAscensions: 156,
-      sallesVisitees: 8,
-      niveauMax: "6c",
-      joursGrimpe: 45
-    },
-    preferences: {
-      typeGrimpe: "Bloc",
-      niveauPrefere: "5c-6b",
-      frequence: "2-3 fois par semaine"
-    },
-    derniereActivite: {
-      date: "2024-01-15",
-      salle: "Vertical Art",
-      voies: 12
+async function fetchProfileData(userId: number) {
+  try {
+    // Récupérer les statistiques utilisateur depuis l'API
+    const statsResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_BDD_SERVICE_URL}/api/seances/user/${userId}/stats`
+    );
+    
+    if (!statsResponse.ok) {
+      throw new Error('Erreur lors de la récupération des statistiques');
     }
-  };
+    
+    const statsData = await statsResponse.json();
+    
+    // Récupérer la dernière séance pour l'activité récente
+    const seancesResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_BDD_SERVICE_URL}/api/seances/user/${userId}`
+    );
+    
+    let derniereActivite = {
+      date: null as string | null,
+      salle: null as string | null,
+      voies: 0
+    };
+    
+    if (seancesResponse.ok) {
+      const seancesData = await seancesResponse.json();
+      if (seancesData.success && seancesData.data && seancesData.data.length > 0) {
+        // Trier par date et prendre la plus récente
+        const seances = seancesData.data.sort((a: any, b: any) => 
+          new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+        const derniereSeance = seances[0];
+        
+        // Compter les voies de la dernière séance
+        const voiesCount = derniereSeance.voie ? derniereSeance.voie.length : 0;
+        
+        // Récupérer le nom de la salle si disponible
+        let nomSalle = "Salle inconnue";
+        if (derniereSeance.salle_id) {
+          try {
+            const salleResponse = await fetch(
+              `${process.env.NEXT_PUBLIC_BDD_SERVICE_URL}/api/salles/${derniereSeance.salle_id}`
+            );
+            if (salleResponse.ok) {
+              const salleData = await salleResponse.json();
+              if (salleData.success && salleData.data) {
+                nomSalle = salleData.data.nom || `Salle #${derniereSeance.salle_id}`;
+              }
+            }
+          } catch (error) {
+            console.error('Erreur lors de la récupération du nom de la salle:', error);
+            nomSalle = `Salle #${derniereSeance.salle_id}`;
+          }
+        }
+        
+        derniereActivite = {
+          date: derniereSeance.date,
+          salle: nomSalle,
+          voies: voiesCount
+        };
+      }
+    }
+    
+    return {
+      stats: {
+        totalAscensions: statsData.data.ascensions || 0,
+        sallesVisitees: statsData.data.sallesVisitees || 0,
+        niveauMax: statsData.data.niveauMax || "N/A",
+        joursGrimpe: statsData.data.joursGrimpe || 0
+      },
+      preferences: {
+        typeGrimpe: "Bloc", // TODO: À implémenter dans le profil utilisateur
+        niveauPrefere: "5c-6b", // TODO: À implémenter dans le profil utilisateur
+        frequence: "2-3 fois par semaine" // TODO: À implémenter dans le profil utilisateur
+      },
+      derniereActivite
+    };
+  } catch (error) {
+    console.error('Erreur lors de la récupération des données:', error);
+    // Retourner des valeurs par défaut en cas d'erreur
+    return {
+      stats: {
+        totalAscensions: 0,
+        sallesVisitees: 0,
+        niveauMax: "N/A",
+        joursGrimpe: 0
+      },
+      preferences: {
+        typeGrimpe: "Non défini",
+        niveauPrefere: "Non défini",
+        frequence: "Non définie"
+      },
+      derniereActivite: {
+        date: null,
+        salle: null,
+        voies: 0
+      }
+    };
+  }
 }
 
 export default function ProfilePage() {
@@ -60,11 +142,14 @@ export default function ProfilePage() {
     return () => document.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // Charger les données du profil
+  // Charger les données du profil dynamiquement selon l'utilisateur connecté
   useEffect(() => {
     const loadProfileData = async () => {
+      console.log(userInfo);
+      if (!userInfo?.userId) return; // attend que l'ID soit dispo
+      setLoading(true);
       try {
-        const data = await fetchProfileData();
+        const data = await fetchProfileData(userInfo.userId);
         setProfileData(data);
       } catch (error) {
         console.error("Erreur lors du chargement du profil:", error);
@@ -74,10 +159,11 @@ export default function ProfilePage() {
     };
 
     loadProfileData();
-  }, []);
+  }, [userInfo?.userId]); // recharge à chaque changement d'utilisateur
 
   const handleLogout = () => {
     logout();
+    router.push('/');
   };
 
   const getInitials = (firstName: string, lastName: string) => {

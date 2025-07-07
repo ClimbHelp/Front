@@ -9,6 +9,7 @@ import styles from './salle-detail.module.css';
 interface Voie {
   id: number;
   salle_id: number;
+  nom?: string; // Ajout du nom de la voie si disponible
   cotation?: string;        // Difficulté en escalade
   description?: string;
   ouvreur?: string;         // Personne qui a ouvert la voie
@@ -39,6 +40,19 @@ export default function SalleDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [filterDifficulty, setFilterDifficulty] = useState('');
+  const [selectedOuvreurs, setSelectedOuvreurs] = useState<string[]>([]);
+  const [selectedType, setSelectedType] = useState('');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+
+  // Générer la liste unique des ouvreurs et types de voie
+  const ouvreurs = salle ? Array.from(new Set(salle.voies.map(v => v.ouvreur).filter(Boolean))) : [];
+  const typesDeVoie = salle ? Array.from(new Set(salle.voies.map(v => v.type_de_voie).filter(Boolean))) : [];
+
+  // Gestion du changement multi-select ouvreur
+  const handleOuvreurChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selected = Array.from(e.target.selectedOptions, option => option.value);
+    setSelectedOuvreurs(selected);
+  };
 
   useEffect(() => {
     if (salleId) {
@@ -64,9 +78,21 @@ export default function SalleDetailPage() {
     }
   };
 
-  const filteredVoies = salle?.voies.filter(voie =>
-    !filterDifficulty || voie.cotation === filterDifficulty
-  ) || [];
+  // Filtrage et tri combinés
+  const filteredVoies = (salle?.voies || [])
+    .filter(voie =>
+      (!filterDifficulty || voie.cotation === filterDifficulty) &&
+      (selectedOuvreurs.length === 0 || (voie.ouvreur && selectedOuvreurs.includes(voie.ouvreur))) &&
+      (!selectedType || voie.type_de_voie === selectedType)
+    )
+    .sort((a, b) => {
+      if (!a.cotation || !b.cotation) return 0;
+      if (sortOrder === 'asc') {
+        return a.cotation.localeCompare(b.cotation, undefined, { numeric: true });
+      } else {
+        return b.cotation.localeCompare(a.cotation, undefined, { numeric: true });
+      }
+    });
 
   const getDifficultyColor = (difficulte: string) => {
     const colors: { [key: string]: string } = {
@@ -89,7 +115,9 @@ export default function SalleDetailPage() {
       '8b': '#000000',
       '8c': '#000000',
     };
-    return colors[difficulte.toLowerCase()] || '#666';
+    // On retire le + éventuel pour la couleur
+    const base = difficulte.toLowerCase().replace('+', '');
+    return colors[base] || '#666';
   };
 
   // Correction robuste pour la localisation
@@ -106,8 +134,6 @@ export default function SalleDetailPage() {
       localisation = salle.localisation;
     }
   }
-  // Log pour debug
-  console.log('localisation:', salle && salle.localisation);
 
   if (loading) {
     return (
@@ -137,6 +163,13 @@ export default function SalleDetailPage() {
           ← Retour aux salles
         </Link>
         <h1 className={styles.title}>{salle.nom}</h1>
+        <Link
+          href={`/salles/${salle.id}/seance-nouvelle` as any}
+          className={styles.createSeanceButton}
+          style={{ display: 'inline-block', margin: '16px 0', padding: '8px 16px', background: '#0070f3', color: '#fff', borderRadius: 4, textDecoration: 'none', fontWeight: 500 }}
+        >
+          + Nouvelle séance dans cette salle
+        </Link>
         {/* Suppression de l'affichage direct de salle.localisation */}
         {/* {salle.localisation && (
           <p className={styles.location}>Localisation: {localisation && localisation.latitude}, {localisation && localisation.longitude}</p>
@@ -190,32 +223,85 @@ export default function SalleDetailPage() {
       <div className={styles.voiesSection}>
         <div className={styles.voiesHeader}>
           <h2>Voies d'escalade ({salle.voies.length})</h2>
-          <div className={styles.filterContainer}>
-            <select
-              value={filterDifficulty}
-              onChange={(e) => setFilterDifficulty(e.target.value)}
-              className={styles.filterSelect}
-            >
-              <option value="">Toutes les difficultés</option>
-              <option value="3a">3a</option>
-              <option value="3b">3b</option>
-              <option value="3c">3c</option>
-              <option value="4a">4a</option>
-              <option value="4b">4b</option>
-              <option value="4c">4c</option>
-              <option value="5a">5a</option>
-              <option value="5b">5b</option>
-              <option value="5c">5c</option>
-              <option value="6a">6a</option>
-              <option value="6b">6b</option>
-              <option value="6c">6c</option>
-              <option value="7a">7a</option>
-              <option value="7b">7b</option>
-              <option value="7c">7c</option>
-              <option value="8a">8a</option>
-              <option value="8b">8b</option>
-              <option value="8c">8c</option>
-            </select>
+          <div className={styles.filterContainer} style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+            {/* Filtre cotation */}
+            <label style={{ fontWeight: 500 }}>Cotation&nbsp;
+              <select
+                value={filterDifficulty}
+                onChange={(e) => setFilterDifficulty(e.target.value)}
+                className={styles.filterSelect}
+              >
+                <option value="">Toutes</option>
+                <option value="3a">3a</option>
+                <option value="3b">3b</option>
+                <option value="3c">3c</option>
+                <option value="4a">4a</option>
+                <option value="4b">4b</option>
+                <option value="4c">4c</option>
+                <option value="5a">5a</option>
+                <option value="5a+">5a+</option>
+                <option value="5b">5b</option>
+                <option value="5b+">5b+</option>
+                <option value="5c">5c</option>
+                <option value="5c+">5c+</option>
+                <option value="6a">6a</option>
+                <option value="6a+">6a+</option>
+                <option value="6b">6b</option>
+                <option value="6b+">6b+</option>
+                <option value="6c">6c</option>
+                <option value="6c+">6c+</option>
+                <option value="7a">7a</option>
+                <option value="7a+">7a+</option>
+                <option value="7b">7b</option>
+                <option value="7b+">7b+</option>
+                <option value="7c">7c</option>
+                <option value="7c+">7c+</option>
+                <option value="8a">8a</option>
+                <option value="8a+">8a+</option>
+                <option value="8b">8b</option>
+                <option value="8b+">8b+</option>
+                <option value="8c">8c</option>
+                <option value="8c+">8c+</option>
+              </select>
+            </label>
+            {/* Tri cotation */}
+            <label style={{ fontWeight: 500 }}>Tri&nbsp;
+              <select
+                value={sortOrder}
+                onChange={e => setSortOrder(e.target.value as 'asc' | 'desc')}
+                className={styles.filterSelect}
+              >
+                <option value="asc">Croissant</option>
+                <option value="desc">Décroissant</option>
+              </select>
+            </label>
+            {/* Filtre ouvreur multi-select */}
+            <label style={{ fontWeight: 500 }}>Ouvreur(s)&nbsp;
+              <select
+                multiple
+                value={selectedOuvreurs}
+                onChange={handleOuvreurChange}
+                className={styles.filterSelect}
+                style={{ minWidth: 120, minHeight: 60 }}
+              >
+                {ouvreurs.map(ouvreur => (
+                  <option key={ouvreur} value={ouvreur}>{ouvreur}</option>
+                ))}
+              </select>
+            </label>
+            {/* Filtre type de voie */}
+            <label style={{ fontWeight: 500 }}>Type&nbsp;
+              <select
+                value={selectedType}
+                onChange={e => setSelectedType(e.target.value)}
+                className={styles.filterSelect}
+              >
+                <option value="">Tous</option>
+                {typesDeVoie.map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </label>
           </div>
         </div>
 
@@ -228,7 +314,7 @@ export default function SalleDetailPage() {
             {filteredVoies.map((voie) => (
               <div key={voie.id} className={styles.voieCard}>
                 <div className={styles.voieHeader}>
-                  <h3 className={styles.voieName}>Voie #{voie.id}</h3>
+                  <h3 className={styles.voieName}>{voie.nom ? voie.nom : `Voie #${voie.id}`}</h3>
                   {voie.cotation && (
                     <span 
                       className={styles.difficulty}
