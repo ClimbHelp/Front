@@ -2,11 +2,13 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
+import { jwtDecode } from 'jwt-decode';
 
 interface UserInfo {
   username: string;
   email: string;
-  userId: number;
+  id: number; // Changé de userId à id pour correspondre au backend
+  premium?: boolean;
 }
 
 interface AuthContextType {
@@ -43,7 +45,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const checkAuthStatus = useCallback(() => {
     const token = localStorage.getItem('authToken');
     const userInfoStr = localStorage.getItem('userInfo');
-    
     if (token && userInfoStr) {
       try {
         const user = JSON.parse(userInfoStr);

@@ -105,7 +105,7 @@ export default function RegisterPage() {
       const data = await response.json();
 
       if (response.ok) {
-        console.log("Inscription réussie:", data);
+
         // Rediriger vers la page de connexion avec un message de succès
         router.push('/login?message=inscription_reussie');
       } else {
@@ -124,7 +124,7 @@ export default function RegisterPage() {
   };
 
   function handleGoogleRegister() {
-    console.log("Google register");
+    
     // Redirection vers l'authentification Google
     try {
       router.push('http://localhost:3001/auth');

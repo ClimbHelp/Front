@@ -9,6 +9,10 @@ import { SUCCESS_MESSAGE, ERROR_MESSAGE } from '@/lib/payment-config';
 import styles from './payment.module.css';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 export default function PaymentPage() {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -36,14 +40,15 @@ export default function PaymentPage() {
         <div className={styles.header}>
           <h1 className={styles.title}>Achetez ClimbHelp</h1>
           <p className={styles.subtitle}>
-            {/* Un seul achat pour accéder à vie à toutes les fonctionnalités de ClimbHelp */}
-            TODO: Problème de paiement avec Stripe, besoin de revoir l'intégration et le processus du service
+            Un seul achat pour accéder à vie à toutes les fonctionnalités de ClimbHelp
           </p>
         </div>
 
         <div className={styles.purchaseContainer}>
           <ProductInfo />
-          <PaymentForm onSubmit={handlePurchase} isProcessing={isProcessing} />
+          <Elements stripe={stripePromise}>
+            <PaymentForm onSubmit={handlePurchase} isProcessing={isProcessing} />
+          </Elements>
         </div>
       </div>
       <Footer />

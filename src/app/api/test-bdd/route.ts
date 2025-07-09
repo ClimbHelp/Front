@@ -3,15 +3,15 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest) {
   try {
     const bddServiceUrl = process.env.BDD_SERVICE_URL || 'http://localhost:3003';
-    console.log('Test de connexion au service BDD:', bddServiceUrl);
+  
     
     // Test de la route de santé
     const healthResponse = await fetch(`${bddServiceUrl}/health`);
-    console.log('Réponse health:', healthResponse.status);
+    
     
     // Test de la route de test Supabase
     const testResponse = await fetch(`${bddServiceUrl}/api/test`);
-    console.log('Réponse test:', testResponse.status);
+    
     
     if (healthResponse.ok && testResponse.ok) {
       const healthData = await healthResponse.json();

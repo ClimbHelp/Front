@@ -6,13 +6,14 @@ import { usePaymentValidation } from '@/hooks/usePaymentValidation';
 import { usePaymentFormatting } from '@/hooks/usePaymentFormatting';
 import { PAYMENT_CONFIG } from '@/lib/payment-config';
 import styles from './PaymentForm.module.css';
+import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { useAuth } from '@/app/contexts/AuthContext';
 
 interface PaymentFormProps {
-  onSubmit: (data: PurchaseFormData) => Promise<void>;
   isProcessing: boolean;
 }
 
-export default function PaymentForm({ onSubmit, isProcessing }: PaymentFormProps) {
+export default function PaymentForm({ isProcessing }: PaymentFormProps) {
   const [formData, setFormData] = useState<PurchaseFormData>({
     email: '',
     firstName: '',
@@ -22,17 +23,66 @@ export default function PaymentForm({ onSubmit, isProcessing }: PaymentFormProps
     expiry: '',
     cvv: ''
   });
-
+  const [loading, setLoading] = useState(false);
   const { errors, validateForm, clearError } = usePaymentValidation();
   const { formatCardNumber, formatExpiry, formatCVV } = usePaymentFormatting();
-
-
+  const stripe = useStripe();
+  const elements = useElements();
+  const { userInfo } = useAuth();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    
-    if (validateForm(formData)) {
-      await onSubmit(formData);
+    if (!stripe || !elements) return;
+    if (!validateForm(formData)) return;
+    setLoading(true);
+    try {
+      // 1. Créer le PaymentIntent côté backend
+      const res = await fetch(`${process.env.NEXT_PUBLIC_PAYMENT_SERVICE_URL}/api/payments/payment-intents`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: PAYMENT_CONFIG.PRICE * 100, // Stripe attend les montants en centimes
+          currency: 'eur',
+          description: PAYMENT_CONFIG.DESCRIPTION,
+          metadata: {
+            userId: userInfo?.id,
+            email: formData.email,
+            firstName: formData.firstName,
+            lastName: formData.lastName
+          },
+          payment_method_types: ['card']
+        })
+      });
+      const data = await res.json();
+      if (!data.success || !data.data?.client_secret) throw new Error('Erreur lors de la création du paiement');
+      const clientSecret = data.data.client_secret;
+
+      // 2. Confirmer le paiement avec Stripe
+      const cardElement = elements.getElement(CardElement);
+      if (!cardElement) throw new Error('Champ carte introuvable');
+      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: cardElement,
+          billing_details: {
+            name: `${formData.firstName} ${formData.lastName}`,
+            email: formData.email
+          }
+        }
+      });
+      if (error) {
+        alert(error.message || 'Erreur lors du paiement');
+        return;
+      }
+      if (paymentIntent && paymentIntent.status === 'succeeded') {
+        alert('🎉 Paiement réussi !\n\nMerci pour votre achat.\n\nVeuillez vous reconnecter pour profiter de vos nouvelles fonctionnalités.');
+        // Optionnel : reset le formulaire ou rediriger
+      } else {
+        alert('Le paiement n\'a pas pu être confirmé.');
+      }
+    } catch (err: any) {
+      alert(err.message || 'Erreur inattendue lors du paiement.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -119,52 +169,13 @@ export default function PaymentForm({ onSubmit, isProcessing }: PaymentFormProps
 
         {formData.paymentMethod === 'card' && (
           <div className={styles.cardDetails}>
+            {/* Champ carte Stripe sécurisé */}
             <div className={styles.formGroup}>
-              <label className={styles.formLabel} htmlFor="cardNumber">
+              <label className={styles.formLabel} htmlFor="cardElement">
                 Numéro de carte *
               </label>
-              <input
-                type="text"
-                id="cardNumber"
-                className={`${styles.formInput} ${errors.cardNumber ? styles.error : ''}`}
-                value={formData.cardNumber}
-                onChange={(e) => handleInputChange('cardNumber', formatCardNumber(e.target.value))}
-                placeholder="1234 5678 9012 3456"
-                required
-              />
-              {errors.cardNumber && <span className={styles.errorText}>{errors.cardNumber}</span>}
-            </div>
-
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel} htmlFor="expiry">
-                  Date d'expiration *
-                </label>
-                <input
-                  type="text"
-                  id="expiry"
-                  className={`${styles.formInput} ${errors.expiry ? styles.error : ''}`}
-                  value={formData.expiry}
-                  onChange={(e) => handleInputChange('expiry', formatExpiry(e.target.value))}
-                  placeholder="MM/AA"
-                  required
-                />
-                {errors.expiry && <span className={styles.errorText}>{errors.expiry}</span>}
-              </div>
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel} htmlFor="cvv">
-                  CVV *
-                </label>
-                <input
-                  type="text"
-                  id="cvv"
-                  className={`${styles.formInput} ${errors.cvv ? styles.error : ''}`}
-                  value={formData.cvv}
-                  onChange={(e) => handleInputChange('cvv', formatCVV(e.target.value))}
-                  placeholder="123"
-                  required
-                />
-                {errors.cvv && <span className={styles.errorText}>{errors.cvv}</span>}
+              <div id="cardElement" className={styles.stripeCardElement}>
+                <CardElement options={{ hidePostalCode: true }} />
               </div>
             </div>
           </div>
@@ -180,9 +191,9 @@ export default function PaymentForm({ onSubmit, isProcessing }: PaymentFormProps
         <button
           type="submit"
           className={styles.purchaseButton}
-          disabled={isProcessing}
+          disabled={isProcessing || loading}
         >
-          {isProcessing ? 'Traitement en cours...' : `Acheter ClimbHelp - ${PAYMENT_CONFIG.PRICE}${PAYMENT_CONFIG.CURRENCY}`}
+          {(isProcessing || loading) ? 'Traitement en cours...' : `Acheter ClimbHelp - ${PAYMENT_CONFIG.PRICE}${PAYMENT_CONFIG.CURRENCY}`}
         </button>
       </form>
     </div>

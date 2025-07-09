@@ -136,7 +136,7 @@ export default function SeanceNouvellePage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ 
-            user_id: userInfo?.userId, 
+            user_id: userInfo?.id, 
             date: today, 
             avis: avisSeance,
             salle_id: parseInt(salle_id)

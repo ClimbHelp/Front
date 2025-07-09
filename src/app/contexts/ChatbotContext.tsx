@@ -75,7 +75,7 @@ export const ChatbotProvider: React.FC<ChatbotProviderProps> = ({ children }) =>
 
   // Charger l'historique des conversations depuis Supabase
   const loadConversationHistory = async () => {
-    if (!userInfo?.userId || !conversationUid) return;
+    if (!userInfo?.id || !conversationUid) return;
 
     try {
       const response = await fetch(`http://localhost:3003/api/chat-conversations/session/${conversationUid}`);
@@ -111,12 +111,12 @@ export const ChatbotProvider: React.FC<ChatbotProviderProps> = ({ children }) =>
       loadConversationHistory();
       setHasLoadedHistory(true);
     }
-  }, [userInfo?.userId, conversationUid]);
+      }, [userInfo?.id, conversationUid]);
 
   // Réinitialiser hasLoadedHistory quand l'utilisateur change
   useEffect(() => {
     setHasLoadedHistory(false);
-  }, [userInfo?.userId]);
+      }, [userInfo?.id]);
 
   const openChatbot = () => {
     setIsOpen(true);
@@ -127,7 +127,7 @@ export const ChatbotProvider: React.FC<ChatbotProviderProps> = ({ children }) =>
   };
 
   const sendMessage = async (content: string) => {
-    if (!content.trim() || !userInfo?.userId) return;
+    if (!content.trim() || !userInfo?.id) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -211,7 +211,7 @@ export const ChatbotProvider: React.FC<ChatbotProviderProps> = ({ children }) =>
   };
 
   const saveConversationToSupabase = async (message: string, botResponse: string) => {
-    if (!userInfo?.userId) return;
+    if (!userInfo?.id) return;
 
     try {
       // Générer un nouveau conversationUid si nécessaire
@@ -227,7 +227,7 @@ export const ChatbotProvider: React.FC<ChatbotProviderProps> = ({ children }) =>
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          user_id: userInfo.userId,
+          user_id: userInfo.id,
           message: message,
           response: botResponse,
           conversation_uid: currentConversationUid

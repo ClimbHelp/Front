@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useAuth } from '../../../contexts/AuthContext';
+import { useAuth } from "@/app/contexts/AuthContext";
 import {
   AuthContainer, AuthCard, AuthHeader, AuthLogo, AuthSubtitle, AuthForm, FormGroup, FormLabel, FormInput,
   PrimaryButton, SecondaryButton, Separator, SeparatorLine, SeparatorText, AuthFooter, AuthLink,
@@ -72,7 +72,7 @@ export default function LoginPage() {
         // Connexion réussie
         const { token, user } = data.data;
         login(token, user);
-        router.push('/profile');
+        router.push('/');
       } else {
         // Erreur de connexion
         setErrorMessage(data.error || 'Erreur lors de la connexion');
@@ -90,7 +90,7 @@ export default function LoginPage() {
   };
   
   function handleGoogleLogin() {
-    console.log("Google login");
+    
     // Redirection vers l'authentification Google
     try {
       router.push('http://localhost:3001/auth');

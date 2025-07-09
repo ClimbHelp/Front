@@ -24,9 +24,11 @@ export default function Header() {
             <Link href="/salles" className={pathname === '/salles' ? styles.activeLink : styles.link}>
               Salles
             </Link>
-            <Link href="/payment" className={pathname === '/payment' ? styles.activeLink : styles.link}>
-              Paiement
-            </Link>
+            {!userInfo?.premium && (
+              <Link href="/payment" className={pathname === '/payment' ? styles.activeLink : styles.link}>
+                Acheter ClimbHelp
+              </Link>
+            )}
             <Link href="/profile" className={pathname === '/profile' ? styles.activeLink : styles.link}>
               Profil {userInfo?.username && `(${userInfo.username})`}
             </Link>

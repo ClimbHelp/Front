@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
     // URL du service BDD
     const bddServiceUrl = process.env.BDD_SERVICE_URL || 'http://localhost:3003';
-    console.log('Tentative de connexion au service BDD:', bddServiceUrl);
+
     
     const bddResponse = await fetch(`${bddServiceUrl}/chat-conversations`, {
       method: 'POST',
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
       }),
     });
 
-    console.log('Réponse du service BDD:', bddResponse.status, bddResponse.statusText);
+    
 
     if (!bddResponse.ok) {
       const errorText = await bddResponse.text();

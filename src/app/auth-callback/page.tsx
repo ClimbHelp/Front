@@ -16,7 +16,7 @@ export default function AuthCallbackPage() {
     if (error) {
       console.error("Erreur d'authentification:", error);
       // Redirection vers la page de login avec un message d'erreur
-      router.push('/login?error=' + encodeURIComponent(error));
+      router.push(`/login?error=${encodeURIComponent(error)}` as const);
       return;
     }
 
@@ -27,7 +27,8 @@ export default function AuthCallbackPage() {
         const userInfo = {
           username: payload.username,
           email: payload.email,
-          userId: payload.userId
+          id: payload.userId, // Le backend envoie userId mais on le stocke comme id
+          premium: payload.premium
         };
         
         // Utiliser le contexte pour se connecter

@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useChatbot } from '../contexts/ChatbotContext';
 import styled from 'styled-components';
+import { useRouter } from 'next/navigation';
 
 const ChatBotContainer = styled.div`
   position: fixed;
@@ -71,8 +72,8 @@ const ChatPopup = styled.div`
   position: fixed;
   bottom: 90px;
   right: 20px;
-  width: 380px;
-  height: 600px;
+  width: 320px;
+  height: 440px;
   background: white;
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
@@ -268,12 +269,12 @@ const WelcomeMessage = styled.div`
 `;
 
 const ChatBot: React.FC = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, userInfo } = useAuth();
   const { isOpen, messages, isLoading, conversationUid, openChatbot, closeChatbot, sendMessage, clearMessages } = useChatbot();
   const [inputValue, setInputValue] = useState('');
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
+  const router = useRouter();
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -316,9 +317,35 @@ const ChatBot: React.FC = () => {
     });
   };
 
-  // Ne pas afficher le chatbot si l'utilisateur n'est pas connecté
+  // Ne pas afficher le chatbot si l'utilisateur n'est pas connecté ou n'a pas acheté
   if (!isAuthenticated) {
     return null;
+  }
+  if (!userInfo?.premium) {
+    return (
+      <ChatBotContainer>
+        <ChatButton $isOpen={isOpen} onClick={isOpen ? closeChatbot : openChatbot} aria-label={isOpen ? 'Fermer le chatbot' : 'Ouvrir le chatbot'}>
+          {isOpen ? '✕' : '💬'}
+        </ChatButton>
+        {isOpen && (
+          <ChatPopup>
+            <ChatHeader>
+              <ChatTitle>Assistant ClimbHelp</ChatTitle>
+              <HeaderButtons>
+                <CloseButton onClick={closeChatbot} aria-label="Fermer">
+                  ✕
+                </CloseButton>
+              </HeaderButtons>
+            </ChatHeader>
+            <WelcomeMessage>
+              <span role="img" aria-label="lock">🔒</span> Cette fonctionnalité est réservée aux utilisateurs ayant acheté ClimbHelp.<br />
+              <br />
+              <b>Procédez à l'achat pour débloquer l'assistant IA !</b>
+            </WelcomeMessage>
+          </ChatPopup>
+        )}
+      </ChatBotContainer>
+    );
   }
 
   return (
@@ -340,7 +367,7 @@ const ChatBot: React.FC = () => {
         <ChatPopup>
           <ChatHeader>
             <ChatTitle>
-              Assistant ClimbHelp
+              Assistant ClimbHelp<br />
               {conversationUid && (
                 <span style={{ fontSize: '12px', color: '#666', marginLeft: '8px' }}>
                   Session active

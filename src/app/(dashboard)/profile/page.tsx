@@ -116,7 +116,7 @@ async function fetchProfileData(userId: number) {
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { userInfo, logout, getToken } = useAuth();
+  const { userInfo, logout, getToken, loading: authLoading } = useAuth();
   const [profileData, setProfileData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const floatRefs = [
@@ -145,11 +145,13 @@ export default function ProfilePage() {
   // Charger les données du profil dynamiquement selon l'utilisateur connecté
   useEffect(() => {
     const loadProfileData = async () => {
-      console.log(userInfo);
-      if (!userInfo?.userId) return; // attend que l'ID soit dispo
+      if (!userInfo?.id) {
+        setLoading(false); // Ne pas bloquer si pas d'utilisateur
+        return;
+      }
       setLoading(true);
       try {
-        const data = await fetchProfileData(userInfo.userId);
+        const data = await fetchProfileData(userInfo.id);
         setProfileData(data);
       } catch (error) {
         console.error("Erreur lors du chargement du profil:", error);
@@ -158,8 +160,23 @@ export default function ProfilePage() {
       }
     };
 
-    loadProfileData();
-  }, [userInfo?.userId]); // recharge à chaque changement d'utilisateur
+    if (!authLoading) {
+      loadProfileData();
+    }
+      }, [userInfo?.id, authLoading]);
+
+  // Afficher le loader si le contexte Auth charge OU (Auth prêt mais profil en cours)
+  if (authLoading || loading) {
+    return (
+      <ProfileContainer>
+        <ProfileContent>
+          <div style={{ textAlign: 'center', padding: '3rem' }}>
+            <div style={{ fontSize: '2rem', color: '#7f8c8d' }}>Chargement...</div>
+          </div>
+        </ProfileContent>
+      </ProfileContainer>
+    );
+  }
 
   const handleLogout = () => {
     logout();
@@ -188,18 +205,6 @@ export default function ProfilePage() {
     }
   };
 
-  if (loading) {
-    return (
-      <ProfileContainer>
-        <ProfileContent>
-          <div style={{ textAlign: 'center', padding: '3rem' }}>
-            <div style={{ fontSize: '2rem', color: '#7f8c8d' }}>Chargement...</div>
-          </div>
-        </ProfileContent>
-      </ProfileContainer>
-    );
-  }
-
   const { firstName, lastName } = getUserDisplayName();
 
   return (
@@ -225,6 +230,11 @@ export default function ProfilePage() {
             </ProfileAvatar>
             <ProfileName>{firstName} {lastName}</ProfileName>
             <ProfileEmail>{userInfo?.email || "Email non disponible"}</ProfileEmail>
+            {userInfo?.premium && (
+              <div style={{ marginTop: '0.5rem', color: '#27ae60', fontWeight: 600, fontSize: '1.1rem' }}>
+                <span role="img" aria-label="étoile">⭐</span> Compte Premium
+              </div>
+            )}
             
             <ProfileStats>
               <ProfileStat>
