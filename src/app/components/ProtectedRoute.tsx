@@ -9,14 +9,14 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated, loading } = useAuth();
+  const { userInfo, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
+    if (!loading && !userInfo) {
       router.push('/login?error=Vous devez être connecté pour accéder à cette page');
     }
-  }, [isAuthenticated, loading, router]);
+  }, [userInfo, loading, router]);
 
   if (loading) {
     return (
@@ -44,7 +44,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     );
   }
 
-  if (!isAuthenticated) {
+  if (!userInfo) {
     return null; // La redirection se fait dans le useEffect
   }
 

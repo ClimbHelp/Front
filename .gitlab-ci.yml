@@ -1,0 +1,100 @@
+# Pipeline pour le frontend Next.js
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  DOCKER_REGISTRY: "registry.gitlab.com"
+  DOCKER_IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+
+# Cache pour les dépendances
+cache:
+  paths:
+    - node_modules/
+    - .npm/
+
+# Tests et linting
+test:
+  stage: test
+  image: node:18-alpine
+  variables:
+    NODE_ENV: test
+  script:
+    - npm ci
+    - npm run lint
+    - npm run test
+    - npm run build
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+    paths:
+      - coverage/
+      - .next/
+    expire_in: 1 week
+  only:
+    - main
+    - develop
+    - merge_requests
+
+# Build de l'image Docker
+build:
+  stage: build
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA .
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest
+  only:
+    - main
+    - develop
+
+# Déploiement en staging
+deploy-staging:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl docker-cli
+  script:
+    - echo "Déploiement du frontend en staging..."
+    - |
+      # Ici vous pouvez ajouter vos commandes de déploiement
+      echo "Frontend déployé:"
+      echo "- Image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+      echo "- Port: 3000"
+      echo "- Environnement: staging"
+  environment:
+    name: staging
+    url: https://staging.votre-app.com
+  only:
+    - develop
+
+# Déploiement en production
+deploy-production:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl docker-cli
+  script:
+    - echo "Déploiement du frontend en production..."
+    - |
+      # Ici vous pouvez ajouter vos commandes de déploiement
+      echo "Frontend déployé:"
+      echo "- Image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+      echo "- Port: 3000"
+      echo "- Environnement: production"
+  environment:
+    name: production
+    url: https://votre-app.com
+  when: manual
+  only:
+    - main
