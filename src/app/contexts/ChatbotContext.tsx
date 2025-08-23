@@ -107,7 +107,7 @@ export const ChatbotProvider: React.FC<ChatbotProviderProps> = ({ children }) =>
 
   // Charger l'historique quand l'utilisateur se connecte et qu'il y a un conversationUid
   useEffect(() => {
-    if (userInfo?.userId && conversationUid && messages.length === 0 && !hasLoadedHistory) {
+    if (userInfo?.id && conversationUid && messages.length === 0 && !hasLoadedHistory) {
       loadConversationHistory();
       setHasLoadedHistory(true);
     }
