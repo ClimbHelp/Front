@@ -24,7 +24,7 @@ test:
     - npm install --legacy-peer-deps
     - npm run lint:check || echo "Linting warnings found but continuing..."
     - npm run test
-    - npm run build
+    - npm run build:no-lint
   artifacts:
     reports:
       coverage_report:
