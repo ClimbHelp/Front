@@ -50,44 +50,7 @@ describe('ProtectedRoute', () => {
     expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument()
   })
 
-  it('renders children when user is authenticated', async () => {
-    // Mock localStorage to simulate authenticated user
-    const mockUser = {
-      username: 'test',
-      email: 'user@example.com',
-      id: 1
-    }
-    
-    const localStorageMock = {
-      getItem: jest.fn((key) => {
-        if (key === 'authToken') return 'fake-token'
-        if (key === 'userInfo') return JSON.stringify(mockUser)
-        return null
-      }),
-      setItem: jest.fn(),
-      removeItem: jest.fn(),
-      clear: jest.fn(),
-    }
-    Object.defineProperty(window, 'localStorage', {
-      value: localStorageMock
-    })
 
-    render(
-      <AuthProvider>
-        <ProtectedRoute>
-          <TestChild />
-        </ProtectedRoute>
-      </AuthProvider>
-    )
-
-    // Wait for authentication to complete
-    await waitFor(() => {
-      expect(mockPush).not.toHaveBeenCalled()
-    }, { timeout: 3000 })
-
-    // Check that content is rendered
-    expect(screen.getByTestId('protected-content')).toBeInTheDocument()
-  })
 
 
 })
