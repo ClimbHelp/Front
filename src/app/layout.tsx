@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ChatbotProvider } from "./contexts/ChatbotContext";
 import ChatBot from "./components/ChatBot";
@@ -34,11 +34,11 @@ export default function RootLayout({
         <StyledComponentsRegistry>
           <AuthProvider>
             <ChatbotProvider>
-              {/* <Header /> */}
+              <Header />
               <main className="flex-1">
                 {children}
               </main>
-              {/* <Footer /> */}
+              <Footer />
               <ChatBot />
             </ChatbotProvider>
           </AuthProvider>
