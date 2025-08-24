@@ -34,31 +34,12 @@ export default function VoiesModal({ isOpen, onClose, voies, salleName }: VoiesM
   // Filtrage et tri des voies
   const filteredVoies = voies
     .filter(voie => {
-      // Filtre par cotation
-      if (filterCotation && filterCotation !== 'Toutes les cotations') {
-        const [min, max] = filterCotation.split(' - ');
-        if (voie.cotation) {
-          const voieLevel = parseInt(voie.cotation.replace(/[^0-9]/g, ''));
-          const voieLetter = voie.cotation.replace(/[0-9]/g, '');
-          
-          if (max) {
-            // Plage de difficulté (ex: "5a - 6c")
-            const minLevel = parseInt(min.replace(/[^0-9]/g, ''));
-            const minLetter = min.replace(/[0-9]/g, '');
-            const maxLevel = parseInt(max.replace(/[^0-9]/g, ''));
-            const maxLetter = max.replace(/[0-9]/g, '');
-            
-            const voieValue = voieLevel * 10 + (voieLetter.charCodeAt(0) - 97);
-            const minValue = minLevel * 10 + (minLetter.charCodeAt(0) - 97);
-            const maxValue = maxLevel * 10 + (maxLetter.charCodeAt(0) - 97);
-            
-            if (voieValue < minValue || voieValue > maxValue) return false;
-          } else {
-            // Difficulté unique (ex: "8a+")
-            if (voie.cotation !== filterCotation) return false;
-          }
-        }
-      }
+             // Filtre par cotation
+       if (filterCotation && filterCotation !== 'Toutes les cotations') {
+         if (voie.cotation && voie.cotation !== filterCotation) {
+           return false;
+         }
+       }
       
       // Filtre par ouvreur
       if (selectedOuvreurs.length > 0 && (!voie.ouvreur || !selectedOuvreurs.includes(voie.ouvreur))) {
@@ -175,12 +156,37 @@ export default function VoiesModal({ isOpen, onClose, voies, salleName }: VoiesM
                 value={filterCotation}
                 onChange={(e) => setFilterCotation(e.target.value)}
               >
-                <option value="">Toutes les cotations</option>
-                <option value="3a - 4c">3a - 4c</option>
-                <option value="5a - 5c">5a - 5c</option>
-                <option value="6a - 6c">6a - 6c</option>
-                <option value="7a - 7c">7a - 7c</option>
-                <option value="8a+">8a+</option>
+                                 <option value="">Toutes les cotations</option>
+                 <option value="3a">3a</option>
+                 <option value="3b">3b</option>
+                 <option value="3c">3c</option>
+                 <option value="4a">4a</option>
+                 <option value="4b">4b</option>
+                 <option value="4c">4c</option>
+                 <option value="5a">5a</option>
+                 <option value="5a+">5a+</option>
+                 <option value="5b">5b</option>
+                 <option value="5b+">5b+</option>
+                 <option value="5c">5c</option>
+                 <option value="5c+">5c+</option>
+                 <option value="6a">6a</option>
+                 <option value="6a+">6a+</option>
+                 <option value="6b">6b</option>
+                 <option value="6b+">6b+</option>
+                 <option value="6c">6c</option>
+                 <option value="6c+">6c+</option>
+                 <option value="7a">7a</option>
+                 <option value="7a+">7a+</option>
+                 <option value="7b">7b</option>
+                 <option value="7b+">7b+</option>
+                 <option value="7c">7c</option>
+                 <option value="7c+">7c+</option>
+                 <option value="8a">8a</option>
+                 <option value="8a+">8a+</option>
+                 <option value="8b">8b</option>
+                 <option value="8b+">8b+</option>
+                 <option value="8c">8c</option>
+                 <option value="8c+">8c+</option>
               </select>
             </div>
 
