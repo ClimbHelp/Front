@@ -59,7 +59,7 @@ build:
     - main
     - develop
 
-# Job spécifique pour GitLab Pages
+# Job GitLab Pages pour la production (branche main)
 pages:
   stage: pages
   image: node:18-alpine
@@ -79,7 +79,7 @@ pages:
     # Copier les fichiers publics
     - cp -r public/* public/ 2>/dev/null || echo "Pas de fichiers publics à copier"
     
-    # Créer un fichier index.html pour GitLab Pages
+    # Créer un fichier index.html pour la production
     - |
       cat > public/index.html << 'EOF'
       <!DOCTYPE html>
@@ -87,19 +87,21 @@ pages:
       <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Application Next.js</title>
+          <title>Application Next.js - Production</title>
           <style>
               body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
               .container { max-width: 600px; margin: 0 auto; }
               .status { color: #28a745; font-size: 24px; margin-bottom: 20px; }
+              .env { background: #28a745; color: white; padding: 5px 10px; border-radius: 5px; }
           </style>
       </head>
       <body>
           <div class="container">
               <div class="status">✅ Application Next.js</div>
-              <h1>Votre application est déployée sur GitLab Pages</h1>
+              <div class="env">PRODUCTION</div>
+              <h1>Votre application est déployée en production</h1>
               <p>Les fichiers statiques ont été générés avec succès.</p>
-              <p>Vérifiez les logs du pipeline pour plus de détails.</p>
+              <p>URL: https://climbhelp.gitlab.io/front/</p>
           </div>
       </body>
       </html>
@@ -117,6 +119,86 @@ pages:
   only:
     - main
 
+# Job GitLab Pages pour le staging (branche develop)
+pages-staging:
+  stage: pages
+  image: node:18-alpine
+  script:
+    # Installer les dépendances
+    - npm install --legacy-peer-deps
+    
+    # Build de l'application Next.js
+    - npm run build
+    
+    # Créer le dossier public/staging pour GitLab Pages
+    - mkdir -p public/staging
+    
+    # Copier les fichiers statiques Next.js
+    - cp -r .next/static public/staging/_next/static/
+    
+    # Copier les fichiers publics
+    - cp -r public/* public/staging/ 2>/dev/null || echo "Pas de fichiers publics à copier"
+    
+    # Créer un fichier index.html pour le staging
+    - |
+      cat > public/staging/index.html << 'EOF'
+      <!DOCTYPE html>
+      <html lang="fr">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Application Next.js - Staging</title>
+          <style>
+              body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+              .container { max-width: 600px; margin: 0 auto; }
+              .status { color: #ffc107; font-size: 24px; margin-bottom: 20px; }
+              .env { background: #ffc107; color: black; padding: 5px 10px; border-radius: 5px; }
+          </style>
+      </head>
+      <body>
+          <div class="container">
+              <div class="status">⚠️ Application Next.js</div>
+              <div class="env">STAGING</div>
+              <h1>Votre application est déployée en staging</h1>
+              <p>Les fichiers statiques ont été générés avec succès.</p>
+              <p>URL: https://climbhelp.gitlab.io/front/staging/</p>
+          </div>
+      </body>
+      </html>
+      EOF
+    
+    # Créer aussi un fichier index.html à la racine pour rediriger
+    - |
+      cat > public/index.html << 'EOF'
+      <!DOCTYPE html>
+      <html lang="fr">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Redirection vers Staging</title>
+          <script>
+              window.location.href = '/staging/';
+          </script>
+      </head>
+      <body>
+          <h1>Redirection vers le staging...</h1>
+          <p>Si vous n'êtes pas redirigé automatiquement, <a href="/staging/">cliquez ici</a></p>
+      </body>
+      </html>
+      EOF
+    
+    # Afficher le contenu du dossier public pour debug
+    - echo "Contenu du dossier public:"
+    - ls -la public/
+    - echo "Contenu du dossier staging:"
+    - ls -la public/staging/ 2>/dev/null || echo "Dossier staging vide"
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+  only:
+    - develop
+
 # Déploiement en staging
 deploy-staging:
   stage: deploy
@@ -133,12 +215,12 @@ deploy-staging:
       echo "🔧 Environnement: staging"
       echo ""
       echo "🎯 Votre site est accessible à:"
-      echo "   https://$CI_PROJECT_NAMESPACE.gitlab.io/$CI_PROJECT_NAME/staging"
+      echo "   https://climbhelp.gitlab.io/front/staging"
       echo ""
-      echo "🔗 Lien direct: https://$CI_PROJECT_NAMESPACE.gitlab.io/$CI_PROJECT_NAME/staging"
+      echo "🔗 Lien direct: https://climbhelp.gitlab.io/front/staging"
   environment:
     name: staging
-    url: https://$CI_PROJECT_NAMESPACE.gitlab.io/$CI_PROJECT_NAME/staging
+    url: https://climbhelp.gitlab.io/front/staging
   only:
     - develop
 
@@ -158,12 +240,12 @@ deploy-production:
       echo "🔧 Environnement: production"
       echo ""
       echo "🎯 Votre site est accessible à:"
-      echo "   https://$CI_PROJECT_NAMESPACE.gitlab.io/$CI_PROJECT_NAME"
+      echo "   https://climbhelp.gitlab.io/front"
       echo ""
-      echo "🔗 Lien direct: https://$CI_PROJECT_NAMESPACE.gitlab.io/$CI_PROJECT_NAME"
+      echo "🔗 Lien direct: https://climbhelp.gitlab.io/front"
   environment:
     name: production
-    url: https://$CI_PROJECT_NAMESPACE.gitlab.io/$CI_PROJECT_NAME
+    url: https://climbhelp.gitlab.io/front
   when: manual
   only:
     - main
