@@ -70,14 +70,35 @@ pages:
     # Build de l'application Next.js
     - npm run build
     
+    # Debug: Vérifier la structure après le build
+    - echo "Structure après build:"
+    - ls -la
+    - echo "Contenu de .next:"
+    - ls -la .next/ 2>/dev/null || echo "Dossier .next non trouvé"
+    - echo "Contenu de .next/static:"
+    - ls -la .next/static/ 2>/dev/null || echo "Dossier .next/static non trouvé"
+    
     # Créer le dossier public pour GitLab Pages
     - mkdir -p public
     
-    # Copier les fichiers statiques Next.js
-    - cp -r .next/static public/_next/static/
+    # Vérifier si .next/static existe et le copier
+    - |
+      if [ -d ".next/static" ]; then
+        echo "Copie des fichiers .next/static"
+        cp -r .next/static public/_next/static/
+      else
+        echo "Dossier .next/static non trouvé, création d'un dossier vide"
+        mkdir -p public/_next/static
+      fi
     
-    # Copier les fichiers publics
-    - cp -r public/* public/ 2>/dev/null || echo "Pas de fichiers publics à copier"
+    # Copier les fichiers publics s'ils existent
+    - |
+      if [ -d "public" ] && [ "$(ls -A public)" ]; then
+        echo "Copie des fichiers publics"
+        cp -r public/* public/ 2>/dev/null || echo "Erreur lors de la copie des fichiers publics"
+      else
+        echo "Pas de fichiers publics à copier"
+      fi
     
     # Créer un fichier index.html pour la production
     - |
@@ -130,14 +151,35 @@ pages-staging:
     # Build de l'application Next.js
     - npm run build
     
+    # Debug: Vérifier la structure après le build
+    - echo "Structure après build:"
+    - ls -la
+    - echo "Contenu de .next:"
+    - ls -la .next/ 2>/dev/null || echo "Dossier .next non trouvé"
+    - echo "Contenu de .next/static:"
+    - ls -la .next/static/ 2>/dev/null || echo "Dossier .next/static non trouvé"
+    
     # Créer le dossier public/staging pour GitLab Pages
     - mkdir -p public/staging
     
-    # Copier les fichiers statiques Next.js
-    - cp -r .next/static public/staging/_next/static/
+    # Vérifier si .next/static existe et le copier
+    - |
+      if [ -d ".next/static" ]; then
+        echo "Copie des fichiers .next/static"
+        cp -r .next/static public/staging/_next/static/
+      else
+        echo "Dossier .next/static non trouvé, création d'un dossier vide"
+        mkdir -p public/staging/_next/static
+      fi
     
-    # Copier les fichiers publics
-    - cp -r public/* public/staging/ 2>/dev/null || echo "Pas de fichiers publics à copier"
+    # Copier les fichiers publics s'ils existent
+    - |
+      if [ -d "public" ] && [ "$(ls -A public)" ]; then
+        echo "Copie des fichiers publics"
+        cp -r public/* public/staging/ 2>/dev/null || echo "Erreur lors de la copie des fichiers publics"
+      else
+        echo "Pas de fichiers publics à copier"
+      fi
     
     # Créer un fichier index.html pour le staging
     - |
