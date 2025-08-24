@@ -182,7 +182,7 @@ export default function SalleDetailPage() {
         </div>
         
         <div className={styles.voiesPreview}>
-          <p>Cliquez sur le bouton ci-dessus pour voir toutes les voies d'escalade avec filtres avancés.</p>
+                     <p>Cliquez sur le bouton ci-dessus pour voir toutes les voies d&apos;escalade avec filtres avancés.</p>
         </div>
       </div>
 

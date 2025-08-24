@@ -29,7 +29,7 @@ export default function VoiesModal({ isOpen, onClose, voies, salleName }: VoiesM
   const [isClimbersDropdownOpen, setIsClimbersDropdownOpen] = useState(false);
 
   // Générer la liste unique des ouvreurs
-  const ouvreurs = Array.from(new Set(voies.map(v => v.ouvreur).filter(Boolean)));
+  const ouvreurs = Array.from(new Set(voies.map(v => v.ouvreur).filter((ouvreur): ouvreur is string => Boolean(ouvreur))));
 
   // Filtrage et tri des voies
   const filteredVoies = voies
@@ -158,7 +158,7 @@ export default function VoiesModal({ isOpen, onClose, voies, salleName }: VoiesM
             <div className={styles.titleSection}>
               <div className={styles.mountainIcon}>⛰️</div>
               <div className={styles.titleText}>
-                <h1>Voies d'Escalade</h1>
+                                 <h1>Voies d&apos;Escalade</h1>
                 <div className={styles.subtitle}>{salleName}</div>
               </div>
             </div>
