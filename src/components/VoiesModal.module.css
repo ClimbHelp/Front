@@ -149,7 +149,7 @@
 
 .filterLabel {
   font-weight: 600;
-  color: #2d3748;
+  color: #1a202c;
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -161,6 +161,7 @@
   border-radius: 8px;
   font-size: 14px;
   background: white;
+  color: #1a202c;
   cursor: pointer;
   transition: all 0.3s ease;
   appearance: none;
@@ -212,7 +213,7 @@
 }
 
 .placeholder {
-  color: #a0aec0;
+  color: #718096;
   font-style: italic;
 }
 
@@ -273,7 +274,7 @@
   transition: background-color 0.2s;
   font-weight: 500;
   border-bottom: 1px solid #f7fafc;
-  color: #2d3748;
+  color: #1a202c;
 }
 
 .climberOption:hover {
@@ -354,7 +355,7 @@
 .voieName {
   font-size: 1.3rem;
   font-weight: 700;
-  color: #333;
+  color: #1a202c;
   margin: 0;
   flex: 1;
 }
@@ -408,17 +409,17 @@
 
 .infoLabel {
   font-weight: 600;
-  color: #555;
+  color: #2d3748;
   margin-right: 0.5rem;
   min-width: 80px;
 }
 
 .infoValue {
-  color: #333;
+  color: #1a202c;
 }
 
 .voieDescription {
-  color: #666;
+  color: #4a5568;
   line-height: 1.6;
   margin: 1rem 0 0 0;
   font-size: 0.9rem;
