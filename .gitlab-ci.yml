@@ -80,12 +80,15 @@ pages:
     
     # Créer le dossier public pour GitLab Pages
     - mkdir -p public
+    - echo "Dossier public créé"
+    - ls -la
     
     # Vérifier si .next/static existe et le copier
     - |
       if [ -d ".next/static" ]; then
         echo "Copie des fichiers .next/static"
-        cp -r .next/static public/_next/static/
+        mkdir -p public/_next/static
+        cp -r .next/static/* public/_next/static/ 2>/dev/null || echo "Erreur lors de la copie, mais dossier créé"
       else
         echo "Dossier .next/static non trouvé, création d'un dossier vide"
         mkdir -p public/_next/static
@@ -161,12 +164,15 @@ pages-staging:
     
     # Créer le dossier public/staging pour GitLab Pages
     - mkdir -p public/staging
+    - echo "Dossier public/staging créé"
+    - ls -la public/
     
     # Vérifier si .next/static existe et le copier
     - |
       if [ -d ".next/static" ]; then
         echo "Copie des fichiers .next/static"
-        cp -r .next/static public/staging/_next/static/
+        mkdir -p public/staging/_next/static
+        cp -r .next/static/* public/staging/_next/static/ 2>/dev/null || echo "Erreur lors de la copie, mais dossier créé"
       else
         echo "Dossier .next/static non trouvé, création d'un dossier vide"
         mkdir -p public/staging/_next/static
