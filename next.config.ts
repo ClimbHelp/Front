@@ -3,6 +3,7 @@ const nextConfig = {
   experimental: {
     typedRoutes: true,  // Routes typées
   },
+  output: 'standalone',  // Génère le dossier standalone pour Docker
   images: {
     remotePatterns: [
       {
