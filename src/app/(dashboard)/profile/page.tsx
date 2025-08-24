@@ -41,13 +41,13 @@ async function fetchProfileData(userId: number) {
       const seancesData = await seancesResponse.json();
       if (seancesData.success && seancesData.data && seancesData.data.length > 0) {
         // Trier par date et prendre la plus récente
-        const seances = seancesData.data.sort((a: any, b: any) => 
-          new Date(b.date).getTime() - new Date(a.date).getTime()
+        const seances = seancesData.data.sort((a: unknown, b: unknown) => 
+          new Date((b as { date: string }).date).getTime() - new Date((a as { date: string }).date).getTime()
         );
         const derniereSeance = seances[0];
         
         // Compter les voies de la dernière séance
-        const voiesCount = derniereSeance.voie ? derniereSeance.voie.length : 0;
+        const voiesCount = (derniereSeance as { voie?: unknown[] }).voie ? (derniereSeance as { voie: unknown[] }).voie.length : 0;
         
         // Récupérer le nom de la salle si disponible
         let nomSalle = "Salle inconnue";
@@ -116,7 +116,7 @@ async function fetchProfileData(userId: number) {
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { userInfo, logout, getToken, loading: authLoading } = useAuth();
+  const { userInfo, logout, loading: authLoading } = useAuth();
   const [profileData, setProfileData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const floatRefs = [
@@ -140,7 +140,7 @@ export default function ProfilePage() {
     }
     document.addEventListener('mousemove', handleMouseMove);
     return () => document.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+  }, [floatRefs]);
 
   // Charger les données du profil dynamiquement selon l'utilisateur connecté
   useEffect(() => {

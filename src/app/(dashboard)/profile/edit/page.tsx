@@ -46,7 +46,7 @@ export default function EditProfilePage() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       alert("Profil mis à jour avec succès !");
       router.push("/profile");
-    } catch (error) {
+    } catch {
       setErrors({ general: "Erreur lors de la mise à jour" });
     } finally {
       setIsLoading(false);

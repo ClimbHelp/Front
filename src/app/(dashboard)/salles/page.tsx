@@ -35,7 +35,7 @@ export default function SallesPage() {
       } else {
         setError('Erreur lors du chargement des salles');
       }
-    } catch (err) {
+    } catch {
       setError('Erreur de connexion au serveur');
     } finally {
       setLoading(false);
@@ -65,8 +65,8 @@ export default function SallesPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Salles d'escalade</h1>
-        <p className={styles.subtitle}>Découvrez les salles d'escalade disponibles</p>
+        <h1 className={styles.title}>Salles d&apos;escalade</h1>
+        <p className={styles.subtitle}>Découvrez les salles d&apos;escalade disponibles</p>
       </div>
 
       <div className={styles.searchContainer}>

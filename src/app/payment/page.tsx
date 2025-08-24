@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import PaymentForm from '@/components/payment/PaymentForm';
 import ProductInfo from '@/components/payment/ProductInfo';
-import PaymentHeader from '@/components/payment/PaymentHeader';
-import { PurchaseFormData } from '@/types/payment';
+
+
 import { SUCCESS_MESSAGE, ERROR_MESSAGE } from '@/lib/payment-config';
 import styles from './payment.module.css';
 import Header from '@/components/layout/Header';
@@ -17,7 +17,7 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 export default function PaymentPage() {
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handlePurchase = async (formData: PurchaseFormData) => {
+  const handlePurchase = async () => {
     setIsProcessing(true);
     
     try {

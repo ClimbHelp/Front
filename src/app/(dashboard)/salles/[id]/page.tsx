@@ -71,7 +71,7 @@ export default function SalleDetailPage() {
       } else {
         setError('Erreur lors du chargement de la salle');
       }
-    } catch (err) {
+    } catch {
       setError('Erreur de connexion au serveur');
     } finally {
       setLoading(false);
@@ -164,7 +164,7 @@ export default function SalleDetailPage() {
         </Link>
         <h1 className={styles.title}>{salle.nom}</h1>
         <Link
-          href={`/salles/${salle.id}/seance-nouvelle` as any}
+          href={`/salles/${salle.id}/seance-nouvelle`}
           className={styles.createSeanceButton}
           style={{ display: 'inline-block', margin: '16px 0', padding: '8px 16px', background: '#0070f3', color: '#fff', borderRadius: 4, textDecoration: 'none', fontWeight: 500 }}
         >
@@ -222,7 +222,7 @@ export default function SalleDetailPage() {
 
       <div className={styles.voiesSection}>
         <div className={styles.voiesHeader}>
-          <h2>Voies d'escalade ({salle.voies.length})</h2>
+          <h2>Voies d&apos;escalade ({salle.voies.length})</h2>
           <div className={styles.filterContainer} style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
             {/* Filtre cotation */}
             <label style={{ fontWeight: 500 }}>Cotation&nbsp;

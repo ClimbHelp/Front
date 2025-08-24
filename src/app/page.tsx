@@ -15,10 +15,10 @@ export default function HomePage() {
         <section className={styles.hero}>
           <div className={styles.heroContent}>
             <h1 className={styles.heroTitle}>
-              Votre compagnon d'escalade
+              Votre compagnon d&apos;escalade
             </h1>
             <p className={styles.heroSubtitle}>
-              Suivez votre progression, découvrez de nouvelles voies et connectez-vous avec la communauté d'escalade
+              Suivez votre progression, découvrez de nouvelles voies et connectez-vous avec la communauté d&apos;escalade
             </p>
             <div className={styles.heroActions}>
               <Link href="/register">
@@ -54,13 +54,13 @@ export default function HomePage() {
               <div className={styles.featureCard}>
                 <div className={styles.featureIcon}>🗺️</div>
                 <h3>Découverte de salles</h3>
-                <p>Trouvez de nouvelles salles d'escalade près de chez vous</p>
+                <p>Trouvez de nouvelles salles d&apos;escalade près de chez vous</p>
               </div>
               
               <div className={styles.featureCard}>
                 <div className={styles.featureIcon}>👥</div>
                 <h3>Communauté</h3>
-                <p>Connectez-vous avec d'autres grimpeurs et partagez vos expériences</p>
+                <p>Connectez-vous avec d&apos;autres grimpeurs et partagez vos expériences</p>
               </div>
               
               <div className={styles.featureCard}>

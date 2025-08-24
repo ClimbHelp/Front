@@ -85,7 +85,9 @@ export default function SeanceNouvellePage() {
         if (data.success && data.data && data.data.voies) {
           setListeVoies(data.data.voies);
         }
-      } catch (e) {}
+      } catch {
+        // Ignore errors silently
+      }
     };
     fetchVoies();
     // Récupérer le nom de la salle
@@ -98,7 +100,9 @@ export default function SeanceNouvellePage() {
         if (data.success && data.data && data.data.nom) {
           setSalleNom(data.data.nom);
         }
-      } catch (e) {}
+      } catch {
+        // Ignore errors silently
+      }
     };
     fetchSalle();
   }, [salle_id]);
@@ -106,7 +110,7 @@ export default function SeanceNouvellePage() {
   const handleVoieChange = (
     index: number,
     field: keyof VoieSeanceForm,
-    value: any
+    value: string | boolean
   ) => {
     setVoies((prev) => {
       const updated = [...prev];
@@ -167,9 +171,9 @@ export default function SeanceNouvellePage() {
       if (!voiesRes.ok)
         throw new Error(voiesData.error || "Erreur création voies");
 
-      router.push(`/salles/${salle_id}` as any);
-    } catch (err: any) {
-      setError(err.message);
+             router.push(`/salles/${salle_id}`);
+              } catch (err) {
+       setError((err as Error).message);
     } finally {
       setLoading(false);
     }
@@ -210,7 +214,7 @@ export default function SeanceNouvellePage() {
           Nouvelle séance dans la salle {salleNom || salle_id}
         </h1>
         <p style={{ color: "#7f8c8d", fontSize: "1.1rem" }}>
-          Enregistrez votre session d'escalade du {today.split("-").reverse().join("/")}
+          Enregistrez votre session d&apos;escalade du {today.split("-").reverse().join("/")}
         </p>
       </div>
       <div
@@ -327,10 +331,8 @@ export default function SeanceNouvellePage() {
               </h2>
               <div style={{ background: "#f8f9fa", borderRadius: 12, padding: "1.5rem", marginBottom: "1.5rem" }}>
                 {voies.map((voie, idx) => {
-                  const voieData =
-                    voie.voie_id !== ""
-                      ? listeVoies.find((v) => v.id === Number(voie.voie_id))
-                      : null;
+                  // Voie data available but not used in this component
+                  // const voieData = voie.voie_id !== "" ? listeVoies.find((v) => v.id === Number(voie.voie_id)) : null;
                   return (
                     <div
                       key={idx}

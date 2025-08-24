@@ -11,9 +11,10 @@ import { useAuth } from '@/app/contexts/AuthContext';
 
 interface PaymentFormProps {
   isProcessing: boolean;
+  onSubmit?: (formData: PurchaseFormData) => Promise<void>;
 }
 
-export default function PaymentForm({ isProcessing }: PaymentFormProps) {
+export default function PaymentForm({ isProcessing, onSubmit }: PaymentFormProps) {
   const [formData, setFormData] = useState<PurchaseFormData>({
     email: '',
     firstName: '',
@@ -25,7 +26,7 @@ export default function PaymentForm({ isProcessing }: PaymentFormProps) {
   });
   const [loading, setLoading] = useState(false);
   const { errors, validateForm, clearError } = usePaymentValidation();
-  const { formatCardNumber, formatExpiry, formatCVV } = usePaymentFormatting();
+  const {} = usePaymentFormatting();
   const stripe = useStripe();
   const elements = useElements();
   const { userInfo } = useAuth();
@@ -74,8 +75,12 @@ export default function PaymentForm({ isProcessing }: PaymentFormProps) {
         return;
       }
       if (paymentIntent && paymentIntent.status === 'succeeded') {
-        alert('🎉 Paiement réussi !\n\nMerci pour votre achat.\n\nVeuillez vous reconnecter pour profiter de vos nouvelles fonctionnalités.');
-        // Optionnel : reset le formulaire ou rediriger
+        // Appeler la fonction onSubmit si elle est fournie, sinon utiliser la logique par défaut
+        if (onSubmit) {
+          await onSubmit(formData);
+        } else {
+          alert('🎉 Paiement réussi !\n\nMerci pour votre achat.\n\nVeuillez vous reconnecter pour profiter de vos nouvelles fonctionnalités.');
+        }
       } else {
         alert('Le paiement n\'a pas pu être confirmé.');
       }

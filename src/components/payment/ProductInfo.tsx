@@ -9,7 +9,7 @@ export default function ProductInfo() {
               <h2 className={styles.productTitle}>{PAYMENT_CONFIG.PRODUCT_NAME}</h2>
         <p className={styles.productDescription}>
           {PAYMENT_CONFIG.DESCRIPTION}
-          Suivez votre progression, gérez vos voies d'escalade et connectez-vous avec votre communauté.
+          Suivez votre progression, gérez vos voies d&apos;escalade et connectez-vous avec votre communauté.
         </p>
 
         <div className={styles.priceSection}>

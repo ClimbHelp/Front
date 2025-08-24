@@ -1,10 +1,10 @@
 'use client'
 
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../contexts/AuthContext";
 
-export default function AuthCallbackPage() {
+function AuthCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
@@ -68,5 +68,35 @@ export default function AuthCallbackPage() {
         <p style={{ color: '#7f8c8d' }}>Veuillez patienter pendant que nous vous connectons.</p>
       </div>
     </div>
+  );
+}
+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense fallback={
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+        fontFamily: 'Arial, sans-serif'
+      }}>
+        <div style={{
+          textAlign: 'center',
+          padding: '2rem',
+          background: 'white',
+          borderRadius: '20px',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+          maxWidth: '400px'
+        }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⏳</div>
+          <h2 style={{ color: '#2c3e50', marginBottom: '1rem' }}>Chargement...</h2>
+          <p style={{ color: '#7f8c8d' }}>Veuillez patienter.</p>
+        </div>
+      </div>
+    }>
+      <AuthCallbackContent />
+    </Suspense>
   );
 } 

@@ -64,7 +64,7 @@ export default function DashboardPage() {
               <h2>Activité récente</h2>
               <div className={styles.activityList}>
                 <div className={styles.activityItem}>
-                  <span className={styles.activityDate}>Aujourd'hui</span>
+                  <span className={styles.activityDate}>Aujourd&apos;hui</span>
                   <span className={styles.activityText}>Voie 6b+ grimpée à Climb Up</span>
                 </div>
                 <div className={styles.activityItem}>

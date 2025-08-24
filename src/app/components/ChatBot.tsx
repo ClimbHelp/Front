@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useChatbot } from '../contexts/ChatbotContext';
 import styled from 'styled-components';
-import { useRouter } from 'next/navigation';
+
 
 const ChatBotContainer = styled.div`
   position: fixed;
@@ -274,7 +274,7 @@ const ChatBot: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -340,7 +340,7 @@ const ChatBot: React.FC = () => {
             <WelcomeMessage>
               <span role="img" aria-label="lock">🔒</span> Cette fonctionnalité est réservée aux utilisateurs ayant acheté ClimbHelp.<br />
               <br />
-              <b>Procédez à l'achat pour débloquer l'assistant IA !</b>
+              <b>Procédez à l&apos;achat pour débloquer l&apos;assistant IA !</b>
             </WelcomeMessage>
           </ChatPopup>
         )}
@@ -397,7 +397,7 @@ const ChatBot: React.FC = () => {
             {messages.length === 0 ? (
               <WelcomeMessage>
                 👋 Bonjour ! Je suis votre assistant ClimbHelp. 
-                Comment puis-je vous aider aujourd'hui ?
+                Comment puis-je vous aider aujourd&apos;hui ?
               </WelcomeMessage>
             ) : (
               messages.map((message) => (
@@ -416,7 +416,7 @@ const ChatBot: React.FC = () => {
             
             {isLoading && (
               <LoadingIndicator>
-                L'assistant réfléchit...
+                L&apos;assistant réfléchit...
               </LoadingIndicator>
             )}
             

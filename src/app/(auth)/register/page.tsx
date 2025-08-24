@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
-  AuthContainer, AuthCard, AuthHeader, AuthLogo, AuthSubtitle, AuthForm, FormGroup, FormRow, FormLabel, FormInput,
+  AuthContainer, AuthCard, AuthHeader, AuthLogo, AuthSubtitle, AuthForm, FormGroup, FormLabel, FormInput,
   PrimaryButton, SecondaryButton, Separator, SeparatorLine, SeparatorText, AuthFooter, AuthLink,
   FloatingElements, FloatingElement, HoldsPattern, Hold
 } from "./AuthStyles";
@@ -39,7 +39,7 @@ export default function RegisterPage() {
     }
     document.addEventListener('mousemove', handleMouseMove);
     return () => document.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+  }, [floatRefs]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -151,7 +151,7 @@ export default function RegisterPage() {
       <AuthCard>
         <AuthHeader>
           <AuthLogo>ClimbHelp</AuthLogo>
-          <AuthSubtitle>Rejoignez la communauté d'escalade</AuthSubtitle>
+          <AuthSubtitle>Rejoignez la communauté d&apos;escalade</AuthSubtitle>
         </AuthHeader>
         
         {error && (
@@ -169,13 +169,13 @@ export default function RegisterPage() {
         
         <AuthForm onSubmit={handleSubmit}>
           <FormGroup>
-            <FormLabel>Nom d'utilisateur</FormLabel>
+            <FormLabel>Nom d&apos;utilisateur</FormLabel>
             <FormInput
               type="text"
               name="username"
               value={formData.username}
               onChange={handleChange}
-              placeholder="Votre nom d'utilisateur"
+              placeholder="Votre nom d&apos;utilisateur"
               required
               minLength={3}
             />
@@ -232,7 +232,7 @@ export default function RegisterPage() {
         
         <SecondaryButton onClick={handleGoogleRegister} disabled={isLoading}>
           <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width={20} height={20} />
-          S'inscrire avec Google
+          S&apos;inscrire avec Google
         </SecondaryButton>
         
         <AuthFooter>

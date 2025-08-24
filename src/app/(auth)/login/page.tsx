@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/app/contexts/AuthContext";
 import {
@@ -9,11 +9,7 @@ import {
   FloatingElements, FloatingElement, HoldsPattern, Hold
 } from "./AuthStyles";
 
-async function fetchLoginData() {
-  // TODO: Implémenter la récupération des données pour la connexion
-}
-
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
@@ -50,7 +46,7 @@ export default function LoginPage() {
     }
     document.addEventListener('mousemove', handleMouseMove);
     return () => document.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+  }, [floatRefs]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -186,4 +182,34 @@ export default function LoginPage() {
       </AuthCard>
     </AuthContainer>
   );
-} 
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+        fontFamily: 'Arial, sans-serif'
+      }}>
+        <div style={{
+          textAlign: 'center',
+          padding: '2rem',
+          background: 'white',
+          borderRadius: '20px',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+          maxWidth: '400px'
+        }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⏳</div>
+          <h2 style={{ color: '#2c3e50', marginBottom: '1rem' }}>Chargement...</h2>
+          <p style={{ color: '#7f8c8d' }}>Veuillez patienter.</p>
+        </div>
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
+  );
+}

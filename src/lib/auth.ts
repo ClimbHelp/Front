@@ -130,7 +130,7 @@ export class AuthManager {
       const response = await authService.register(credentials.email, credentials.password, credentials.name);
       
       if (response.success && response.data) {
-        const { token, user } = response.data;
+        const { token, user } = response.data as { token: string; user: User };
         this.setToken(token);
         this.setUser(user);
         return { success: true, user };
