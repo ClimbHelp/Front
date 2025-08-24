@@ -191,6 +191,7 @@ export default function SalleDetailPage() {
         onClose={() => setIsVoiesModalOpen(false)}
         voies={salle.voies}
         salleName={salle.nom}
+        salleId={salle.id}
       />
     </div>
   );

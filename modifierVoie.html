@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier une Voie d'Escalade</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.2);
+            animation: modalSlideIn 0.4s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from { 
+                opacity: 0; 
+                transform: scale(0.9) translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: scale(1) translateY(0); 
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 32px;
+            border-radius: 24px 24px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="15" height="15" patternUnits="userSpaceOnUse"><path d="M 15 0 L 0 0 0 15" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        }
+
+        .modal-title {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .title-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .title-icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .title-text h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .title-text p {
+            font-size: 16px;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .route-badge {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-body {
+            padding: 40px;
+        }
+
+        .mode-selector {
+            display: flex;
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 32px;
+            gap: 4px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .mode-btn.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .mode-btn:not(.active) {
+            color: #718096;
+            background: transparent;
+        }
+
+        .mode-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-section {
+            margin-bottom: 32px;
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .required::after {
+            content: ' *';
+            color: #f56565;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+            font-family: inherit;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-input:hover, .form-select:hover, .form-textarea:hover {
+            border-color: #cbd5e0;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 20px;
+            padding-right: 50px;
+            cursor: pointer;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .form-triple {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            font-size: 18px;
+        }
+
+        .input-icon + .form-input {
+            padding-left: 48px;
+        }
+
+        .color-picker-section {
+            margin-top: 12px;
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+            gap: 12px;
+            max-width: 500px;
+        }
+
+        .color-option {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            border: 3px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .color-option.selected {
+            border-color: #2d3748;
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .color-option.selected::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .tags-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            min-height: 54px;
+            background: white;
+            cursor: text;
+            transition: all 0.3s ease;
+        }
+
+        .tags-input:focus-within {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .tag {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: tagAppear 0.3s ease;
+        }
+
+        @keyframes tagAppear {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            opacity: 0.8;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+
+        .tag-remove:hover {
+            opacity: 1;
+        }
+
+        .tag-input {
+            border: none;
+            outline: none;
+            font-size: 14px;
+            padding: 8px 4px;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        /* Delete Mode Styles */
+        .delete-section {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .delete-warning {
+            background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+            border: 2px solid #f56565;
+            border-radius: 16px;
+            padding: 32px;
+            margin: 24px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .delete-warning::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="warning-pattern" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(245,101,101,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23warning-pattern)"/></svg>');
+        }
+
+        .delete-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .delete-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .delete-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #c53030;
+            margin-bottom: 12px;
+        }
+
+        .delete-description {
+            color: #742a2a;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .route-info-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .route-info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .route-name-display {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .route-grade-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .route-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            font-size: 14px;
+            color: #718096;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-open { background: #48bb78; }
+        .status-closed { background: #f56565; }
+        .status-maintenance { background: #ed8936; }
+
+        .consequences-list {
+            background: rgba(245, 101, 101, 0.1);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            text-align: left;
+        }
+
+        .consequences-list h4 {
+            color: #c53030;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .consequences-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .consequences-list li {
+            padding: 4px 0;
+            color: #742a2a;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .consequences-list li::before {
+            content: '⚠️';
+            font-size: 12px;
+        }
+
+        .modal-footer {
+            padding: 32px 40px;
+            border-top: 1px solid #e2e8f0;
+            background: #f8fafc;
+            border-radius: 0 0 24px 24px;
+            display: flex;
+            gap: 16px;
+            justify-content: space-between;
+        }
+
+        .footer-left {
+            display: flex;
+            gap: 16px;
+        }
+
+        .footer-right {
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #f7fafc;
+            border-color: #cbd5e0;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(245, 101, 101, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 101, 101, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(237, 137, 54, 0.3);
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(237, 137, 54, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .success-animation,
+        .delete-animation {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .success-animation.show,
+        .delete-animation.show {
+            display: block;
+            animation: successPulse 0.6s ease;
+        }
+
+        @keyframes successPulse {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .success-icon,
+        .delete-success-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .success-animation {
+            color: #48bb78;
+        }
+
+        .delete-animation {
+            color: #f56565;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .modal {
+                max-width: 100%;
+            }
+            
+            .modal-header,
+            .modal-body {
+                padding: 24px;
+            }
+            
+            .modal-footer {
+                padding: 24px;
+                flex-direction: column;
+            }
+            
+            .footer-left,
+            .footer-right {
+                justify-content: center;
+            }
+            
+            .title-text h1 {
+                font-size: 24px;
+            }
+            
+            .form-row,
+            .form-triple {
+                grid-template-columns: 1fr;
+            }
+            
+            .color-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">
+                <div class="title-section">
+                    <div class="title-icon">✏️</div>
+                    <div class="title-text">
+                        <h1>Modifier la voie</h1>
+                        <p>Surplomb du Diable</p>
+                    </div>
+                </div>
+                <div class="route-badge">7a+</div>
+            </div>
+        </div>
+
+        <div class="modal-body">
+            <!-- Mode Selector -->
+            <div class="mode-selector">
+                <button class="mode-btn active" onclick="switchMode('edit')" id="editModeBtn">
+                    ✏️ Modifier
+                </button>
+                <button class="mode-btn" onclick="switchMode('delete')" id="deleteModeBtn">
+                    🗑️ Supprimer
+                </button>
+            </div>
+
+            <!-- Edit Mode -->
+            <div class="form-section active" id="editSection">
+                <form id="updateRouteForm">
+                    <!-- Section 1: Informations générales -->
+                    <div class="form-section active">
+                        <div class="section-title">
+                            <div class="section-icon">📋</div>
+                            Informations générales
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label required">Nom de la voie</label>
+                            <div class="input-group">
+                                <span class="input-icon">🏔️</span>
+                                <input type="text" class="form-input" id="routeName" value="Surplomb du Diable" required>
+                            </div>
+                        </div>
+
+                        <div class="form-triple">
+                            <div class="form-group">
+                                <label class="form-label required">Cotation</label>
+                                <select class="form-select" id="routeGrade" required>
+                                    <optgroup label="Débutant">
+                                        <option value="3a">3a</option>
+                                        <option value="3b">3b</option>
+                                        <option value="3c">3c</option>
+                                        <option value="4a">4a</option>
+                                        <option value="4b">4b</option>
+                                        <option value="4c">4c</option>
+                                    </optgroup>
+                                    <optgroup label="Intermédiaire">
+                                        <option value="5a">5a</option>
+                                        <option value="5b">5b</option>
+                                        <option value="5c">5c</option>
+                                        <option value="6a">6a</option>
+                                        <option value="6a+">6a+</option>
+                                        <option value="6b">6b</option>
+                                        <option value="6b+">6b+</option>
+                                        <option value="6c">6c</option>
+                                        <option value="6c+">6c+</option>
+                                    </optgroup>
+                                    <optgroup label="Avancé">
+                                        <option value="7a">7a</option>
+                                        <option value="7a+" selected>7a+</option>
+                                        <option value="7b">7b</option>
+                                        <option value="7b+">7b+</option>
+                                        <option value="7c">7c</option>
+                                        <option value="7c+">7c+</option>
+                                    </optgroup>
+                                    <optgroup label="Expert">
+                                        <option value="8a">8a</option>
+                                        <option value="8a+">8a+</option>
+                                        <option value="8b">8b</option>
+                                        <option value="8b+">8b+</option>
+                                        <option value="8c">8c</option>
+                                        <option value="8c+">8c+</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Hauteur (m)</label>
+                                <div class="input-group">
+                                    <span class="input-icon">📏</span>
+                                    <input type="number" class="form-input" id="routeHeight" value="32" min="1" max="500">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label required">Statut</label>
+                                <select class="form-select" id="routeStatus" required>
+                                    <option value="open" selected>🟢 Ouverte</option>
+                                    <option value="closed">🔴 Fermée</option>
+                                    <option value="maintenance">🟡 En maintenance</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Ouvreur</label>
+                                <div class="input-group">
+                                    <span class="input-icon">👤</span>
+                                    <input type="text" class="form-input" id="routeOpener" value="M. Dubois">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Date d'ouverture</label>
+                                <div class="input-group">
+                                    <span class="input-icon">📅</span>
+                                    <input type="date" class="form-input" id="openingDate" value="2024-03-15">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Description et caractéristiques -->
+                    <div class="form-section active">
+                        <div class="section-title">
+                            <div class="section-icon">📝</div>
+                            Description et caractéristiques
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-textarea" id="routeDescription">Voie technique avec plusieurs surplombs consécutifs. Nécessite une bonne lecture et de la force dans les avant-bras. Le crux se situe vers le milieu de la voie avec un passage en réta.</textarea>
+                            <div class="help-text">Décrivez les mouvements clés, les difficultés techniques, les conseils tactiques</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Style d'escalade</label>
+                            <div class="tags-input" onclick="focusTagInput()">
+                                <div id="styleTags">
+                                    <div class="tag">
+                                        Surplomb
+                                        <span class="tag-remove" onclick="removeStyleTag('Surplomb')">×</span>
+                                    </div>
+                                    <div class="tag">
+                                        Technique
+                                        <span class="tag-remove" onclick="removeStyleTag('Technique')">×</span>
+                                    </div>
+                                    <div class="tag">
+                                        Force
+                                        <span class="tag-remove" onclick="removeStyleTag('Force')">×</span>
+                                    </div>
+                                </div>
+                                <input type="text" class="tag-input" id="styleInput" placeholder="Ajouter un style..." onkeydown="handleTagInput(event, 'style')">
+                            </div>
+                            <div class="help-text">Appuyez sur Entrée pour ajouter un style</div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Apparence -->
+                    <div class="form-section active">
+                        <div class="section-title">
+                            <div class="section-icon">🎨</div>
+                            Couleur des prises
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label required">Couleur principale</label>
+                            <div class="color-picker-section">
+                                <div class="color-grid">
+                                    <div class="color-option selected" style="background: #f56565;" onclick="selectColor('#f56565')" data-color="#f56565" title="Rouge"></div>
+                                    <div class="color-option" style="background: #ed8936;" onclick="selectColor('#ed8936')" data-color="#ed8936" title="Orange"></div>
+                                    <div class="color-option" style="background: #ecc94b;" onclick="selectColor('#ecc94b')" data-color="#ecc94b" title="Jaune"></div>
+                                    <div class="color-option" style="background: #48bb78;" onclick="selectColor('#48bb78')" data-color="#48bb78" title="Vert"></div>
+                                    <div class="color-option" style="background: #4299e1;" onclick="selectColor('#4299e1')" data-color="#4299e1" title="Bleu"></div>
+                                    <div class="color-option" style="background: #667eea;" onclick="selectColor('#667eea')" data-color="#667eea" title="Indigo"></div>
+                                    <div class="color-option" style="background: #9f7aea;" onclick="selectColor('#9f7aea')" data-color="#9f7aea" title="Violet"></div>
+                                    <div class="color-option" style="background: #ed64a6;" onclick="selectColor('#ed64a6')" data-color="#ed64a6" title="Rose"></div>
+                                    <div class="color-option" style="background: #4a5568;" onclick="selectColor('#4a5568')" data-color="#4a5568" title="Gris"></div>
+                                    <div class="color-option" style="background: #2d3748;" onclick="selectColor('#2d3748')" data-color="#2d3748" title="Noir"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Delete Mode -->
+            <div class="form-section" id="deleteSection">
+                <div class="delete-section">
+                    <div class="delete-warning">
+                        <div class="delete-content">
+                            <div class="delete-icon">⚠️</div>
+                            <div class="delete-title">Supprimer définitivement cette voie ?</div>
+                            <div class="delete-description">
+                                Cette action est <strong>irréversible</strong>. Toutes les données associées à cette voie seront perdues.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="route-info-card">
+                        <div class="route-info-header">
+                            <div class="route-name-display">Surplomb du Diable</div>
+                            <div class="route-grade-display">7a+</div>
+                        </div>
+                        <div class="route-meta">
+                            <div class="meta-item">
+                                <div class="status-indicator status-open"></div>
+                                <span>Ouverte</span>
+                            </div>
+                            <div class="meta-item">
+                                <span>👤</span>
+                                <span>Ouvreur: M. Dubois</span>
+                            </div>
+                            <div class="meta-item">
+                                <span>📏</span>
+                                <span>Hauteur: 32m</span>
+                            </div>
+                            <div class="meta-item">
+                                <span>📅</span>
+                                <span>Créée le 15/03/2024</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="consequences-list">
+                        <h4>Conséquences de la suppression :</h4>
+                        <ul>
+                            <li>Suppression de tous les historiques d'ascensions</li>
+                            <li>Perte des commentaires et évaluations des grimpeurs</li>
+                            <li>Suppression des photos associées</li>
+                            <li>Perte des statistiques de performance</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Animations de succès -->
+            <div class="success-animation" id="successAnimation">
+                <div class="success-icon">✅</div>
+                <h3>Voie modifiée avec succès !</h3>
+                <p>Les modifications ont été enregistrées.</p>
