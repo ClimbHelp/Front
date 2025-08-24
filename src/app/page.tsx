@@ -1,16 +1,12 @@
 'use client'
 
 import Link from 'next/link';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
 import Button from '@/components/ui/Button';
 import styles from './page.module.css';
 
 export default function HomePage() {
   return (
-    <>
-      <Header />
-      <main className={styles.main}>
+    <main className={styles.main}>
         {/* Hero Section */}
         <section className={styles.hero}>
           <div className={styles.heroContent}>
@@ -126,7 +122,5 @@ export default function HomePage() {
           </div>
         </section> */}
       </main>
-      <Footer />
-    </>
   );
 }

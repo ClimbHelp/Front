@@ -7,8 +7,6 @@ import ProductInfo from '@/components/payment/ProductInfo';
 
 import { SUCCESS_MESSAGE, ERROR_MESSAGE } from '@/lib/payment-config';
 import styles from './payment.module.css';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 
@@ -34,9 +32,7 @@ export default function PaymentPage() {
   };
 
   return (
-    <>
-      <Header />
-      <div className={styles.container}>
+    <div className={styles.container}>
         <div className={styles.header}>
           <h1 className={styles.title}>Achetez ClimbHelp</h1>
           <p className={styles.subtitle}>
@@ -51,8 +47,6 @@ export default function PaymentPage() {
           </Elements>
         </div>
       </div>
-      <Footer />
-    </>
   );
 }
 
