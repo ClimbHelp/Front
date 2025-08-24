@@ -54,7 +54,7 @@ function LoginContent() {
     setErrorMessage("");
 
     try {
-      const response = await fetch('http://localhost:3003/api/users/login', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BDD_SERVICE_URL}/api/users/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ function LoginContent() {
     
     // Redirection vers l'authentification Google
     try {
-      router.push('http://localhost:3001/auth');
+      window.location.href = `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/auth`;
     } catch (error) {
       console.error("Erreur lors de la redirection Google:", error);
     }

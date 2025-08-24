@@ -78,7 +78,7 @@ export const ChatbotProvider: React.FC<ChatbotProviderProps> = ({ children }) =>
     if (!userInfo?.id || !conversationUid) return;
 
     try {
-      const response = await fetch(`http://localhost:3003/api/chat-conversations/session/${conversationUid}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BDD_SERVICE_URL}/api/chat-conversations/session/${conversationUid}`);
       if (response.ok) {
         const data = await response.json();
         const conversationMessages: Message[] = [];
@@ -221,7 +221,7 @@ export const ChatbotProvider: React.FC<ChatbotProviderProps> = ({ children }) =>
         setConversationUid(currentConversationUid);
       }
 
-      const supabaseResponse = await fetch('http://localhost:3003/api/chat-conversations', {
+      const supabaseResponse = await fetch(`${process.env.NEXT_PUBLIC_BDD_SERVICE_URL}/api/chat-conversations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
