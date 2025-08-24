@@ -62,79 +62,36 @@ build:
 # Job GitLab Pages pour le staging (branche develop)
 pages:
   stage: pages
-  image: alpine:latest
+  image: node:18-alpine
   script:
+    # Installer les dépendances
+    - npm install --legacy-peer-deps
+    
+    # Build de l'application Next.js
+    - npm run build
+    
     # Créer la structure pour le staging
     - mkdir -p public/staging
+    
+    # Copier les fichiers statiques Next.js vers staging
     - |
-      cat > public/staging/index.html << 'EOF'
-      <!DOCTYPE html>
-      <html lang="fr">
-      <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Application Next.js - Staging</title>
-          <style>
-              body { 
-                  font-family: Arial, sans-serif; 
-                  text-align: center; 
-                  padding: 50px; 
-                  background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
-                  color: white;
-                  margin: 0;
-                  min-height: 100vh;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-              }
-              .container { 
-                  max-width: 600px; 
-                  background: rgba(255,255,255,0.1); 
-                  padding: 40px; 
-                  border-radius: 15px; 
-                  backdrop-filter: blur(10px);
-                  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-              }
-              .status { 
-                  font-size: 48px; 
-                  margin-bottom: 20px; 
-              }
-              .env { 
-                  background: #ffc107; 
-                  color: black; 
-                  padding: 8px 16px; 
-                  border-radius: 25px; 
-                  display: inline-block; 
-                  margin-bottom: 20px; 
-                  font-weight: bold;
-              }
-              .url { 
-                  background: rgba(255,255,255,0.2); 
-                  padding: 15px; 
-                  border-radius: 8px; 
-                  font-family: monospace; 
-                  margin: 20px 0; 
-                  border: 1px solid rgba(255,255,255,0.3);
-              }
-              h1 { margin-bottom: 30px; }
-              p { line-height: 1.6; }
-          </style>
-      </head>
-      <body>
-          <div class="container">
-              <div class="status">⚠️</div>
-              <div class="env">STAGING</div>
-              <h1>Application Next.js - Staging</h1>
-              <p>Votre application est déployée en environnement de staging.</p>
-              <div class="url">
-                  https://climbhelp.gitlab.io/front/staging/
-              </div>
-              <p><strong>✅ Staging opérationnel !</strong></p>
-              <p>Cette page confirme que votre déploiement staging fonctionne correctement.</p>
-          </div>
-      </body>
-      </html>
-      EOF
+      if [ -d ".next/static" ]; then
+        echo "Copie des fichiers .next/static vers staging"
+        mkdir -p public/staging/_next/static
+        cp -r .next/static/* public/staging/_next/static/ 2>/dev/null || echo "Erreur lors de la copie, mais dossier créé"
+      else
+        echo "Dossier .next/static non trouvé, création d'un dossier vide"
+        mkdir -p public/staging/_next/static
+      fi
+    
+    # Copier les fichiers publics vers staging
+    - |
+      if [ -d "public" ] && [ "$(ls -A public)" ]; then
+        echo "Copie des fichiers publics vers staging"
+        cp -r public/* public/staging/ 2>/dev/null || echo "Erreur lors de la copie des fichiers publics"
+      else
+        echo "Pas de fichiers publics à copier"
+      fi
     
     # Créer un fichier index.html à la racine pour rediriger vers staging
     - |
@@ -180,7 +137,11 @@ pages:
       </html>
       EOF
     
-    - echo "Fichiers créés avec succès"
+    # Debug: Afficher la structure
+    - echo "Structure après build:"
+    - ls -la
+    - echo "Contenu de .next:"
+    - ls -la .next/ 2>/dev/null || echo "Dossier .next non trouvé"
     - echo "Contenu du dossier public:"
     - ls -la public/
     - echo "Contenu du dossier staging:"
@@ -195,81 +156,42 @@ pages:
 # Job GitLab Pages pour la production (branche main)
 pages-production:
   stage: pages
-  image: alpine:latest
+  image: node:18-alpine
   script:
+    # Installer les dépendances
+    - npm install --legacy-peer-deps
+    
+    # Build de l'application Next.js
+    - npm run build
+    
     # Créer la structure pour la production
     - mkdir -p public
-    - |
-      cat > public/index.html << 'EOF'
-      <!DOCTYPE html>
-      <html lang="fr">
-      <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Application Next.js - Production</title>
-          <style>
-              body { 
-                  font-family: Arial, sans-serif; 
-                  text-align: center; 
-                  padding: 50px; 
-                  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-                  color: white;
-                  margin: 0;
-                  min-height: 100vh;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-              }
-              .container { 
-                  max-width: 600px; 
-                  background: rgba(255,255,255,0.1); 
-                  padding: 40px; 
-                  border-radius: 15px; 
-                  backdrop-filter: blur(10px);
-                  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-              }
-              .status { 
-                  font-size: 48px; 
-                  margin-bottom: 20px; 
-              }
-              .env { 
-                  background: #28a745; 
-                  color: white; 
-                  padding: 8px 16px; 
-                  border-radius: 25px; 
-                  display: inline-block; 
-                  margin-bottom: 20px; 
-                  font-weight: bold;
-              }
-              .url { 
-                  background: rgba(255,255,255,0.2); 
-                  padding: 15px; 
-                  border-radius: 8px; 
-                  font-family: monospace; 
-                  margin: 20px 0; 
-                  border: 1px solid rgba(255,255,255,0.3);
-              }
-              h1 { margin-bottom: 30px; }
-              p { line-height: 1.6; }
-          </style>
-      </head>
-      <body>
-          <div class="container">
-              <div class="status">🚀</div>
-              <div class="env">PRODUCTION</div>
-              <h1>Application Next.js - Production</h1>
-              <p>Votre application est déployée en production.</p>
-              <div class="url">
-                  https://climbhelp.gitlab.io/front/
-              </div>
-              <p><strong>✅ Production opérationnelle !</strong></p>
-              <p>Cette page confirme que votre déploiement production fonctionne correctement.</p>
-          </div>
-      </body>
-      </html>
-      EOF
     
-    - echo "Fichier production créé avec succès"
+    # Copier les fichiers statiques Next.js
+    - |
+      if [ -d ".next/static" ]; then
+        echo "Copie des fichiers .next/static"
+        mkdir -p public/_next/static
+        cp -r .next/static/* public/_next/static/ 2>/dev/null || echo "Erreur lors de la copie, mais dossier créé"
+      else
+        echo "Dossier .next/static non trouvé, création d'un dossier vide"
+        mkdir -p public/_next/static
+      fi
+    
+    # Copier les fichiers publics
+    - |
+      if [ -d "public" ] && [ "$(ls -A public)" ]; then
+        echo "Copie des fichiers publics"
+        cp -r public/* public/ 2>/dev/null || echo "Erreur lors de la copie des fichiers publics"
+      else
+        echo "Pas de fichiers publics à copier"
+      fi
+    
+    # Debug: Afficher la structure
+    - echo "Structure après build:"
+    - ls -la
+    - echo "Contenu de .next:"
+    - ls -la .next/ 2>/dev/null || echo "Dossier .next non trouvé"
     - echo "Contenu du dossier public:"
     - ls -la public/
   artifacts:
