@@ -8,7 +8,7 @@ WORKDIR /app
 
 # Copier les fichiers de dépendances
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN npm install --legacy-peer-deps
 
 # Rebuild la source uniquement quand nécessaire
 FROM base AS builder
