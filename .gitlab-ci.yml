@@ -62,59 +62,54 @@ build:
 # Job spécifique pour GitLab Pages
 pages:
   stage: pages
-  image: docker:20.10.16
-  services:
-    - docker:20.10.16-dind
-  variables:
-    DOCKER_TLS_CERTDIR: "/certs"
-  before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  image: node:18-alpine
   script:
-    # Récupérer l'image Docker construite
-    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+    # Installer les dépendances
+    - npm install --legacy-peer-deps
     
-    # Créer un conteneur temporaire pour extraire les fichiers
-    - docker create --name temp-container $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+    # Build de l'application Next.js
+    - npm run build
     
-    # Créer le dossier public et copier les fichiers statiques
+    # Créer le dossier public pour GitLab Pages
     - mkdir -p public
     
-    # Copier les fichiers statiques selon votre Dockerfile Next.js standalone
-    - docker cp temp-container:/app/.next/static/. public/_next/static/ 2>/dev/null || echo "Copie des fichiers .next/static"
-    - docker cp temp-container:/app/public/. public/ 2>/dev/null || echo "Copie des fichiers public"
+    # Copier les fichiers statiques Next.js
+    - cp -r .next/static public/_next/static/
+    
+    # Copier les fichiers publics
+    - cp -r public/* public/ 2>/dev/null || echo "Pas de fichiers publics à copier"
     
     # Créer un fichier index.html pour GitLab Pages
     - |
-      if [ ! -f public/index.html ]; then
-        echo "Création d'un fichier index.html pour GitLab Pages"
-        cat > public/index.html << 'EOF'
-        <!DOCTYPE html>
-        <html lang="fr">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Application Next.js</title>
-            <script>
-                // Redirection vers l'application Next.js
-                window.location.href = '/_next/static/';
-            </script>
-        </head>
-        <body>
-            <h1>Application Next.js</h1>
-            <p>Redirection en cours...</p>
-        </body>
-        </html>
-        EOF
-      fi
-    
-
-    
-    # Nettoyer le conteneur temporaire
-    - docker rm temp-container
+      cat > public/index.html << 'EOF'
+      <!DOCTYPE html>
+      <html lang="fr">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Application Next.js</title>
+          <style>
+              body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+              .container { max-width: 600px; margin: 0 auto; }
+              .status { color: #28a745; font-size: 24px; margin-bottom: 20px; }
+          </style>
+      </head>
+      <body>
+          <div class="container">
+              <div class="status">✅ Application Next.js</div>
+              <h1>Votre application est déployée sur GitLab Pages</h1>
+              <p>Les fichiers statiques ont été générés avec succès.</p>
+              <p>Vérifiez les logs du pipeline pour plus de détails.</p>
+          </div>
+      </body>
+      </html>
+      EOF
     
     # Afficher le contenu du dossier public pour debug
     - echo "Contenu du dossier public:"
     - ls -la public/
+    - echo "Contenu du dossier _next/static:"
+    - ls -la public/_next/static/ 2>/dev/null || echo "Dossier _next/static vide"
   artifacts:
     paths:
       - public
