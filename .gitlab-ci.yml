@@ -59,135 +59,13 @@ build:
     - main
     - develop
 
-# Job GitLab Pages pour la production (branche main)
+# Job GitLab Pages pour le staging (branche develop)
 pages:
   stage: pages
-  image: node:18-alpine
+  image: alpine:latest
   script:
-    # Installer les dépendances
-    - npm install --legacy-peer-deps
-    
-    # Build de l'application Next.js
-    - npm run build
-    
-    # Debug: Vérifier la structure après le build
-    - echo "Structure après build:"
-    - ls -la
-    - echo "Contenu de .next:"
-    - ls -la .next/ 2>/dev/null || echo "Dossier .next non trouvé"
-    - echo "Contenu de .next/static:"
-    - ls -la .next/static/ 2>/dev/null || echo "Dossier .next/static non trouvé"
-    
-    # Créer le dossier public pour GitLab Pages
-    - mkdir -p public
-    - echo "Dossier public créé"
-    - ls -la
-    
-    # Vérifier si .next/static existe et le copier
-    - |
-      if [ -d ".next/static" ]; then
-        echo "Copie des fichiers .next/static"
-        mkdir -p public/_next/static
-        cp -r .next/static/* public/_next/static/ 2>/dev/null || echo "Erreur lors de la copie, mais dossier créé"
-      else
-        echo "Dossier .next/static non trouvé, création d'un dossier vide"
-        mkdir -p public/_next/static
-      fi
-    
-    # Copier les fichiers publics s'ils existent
-    - |
-      if [ -d "public" ] && [ "$(ls -A public)" ]; then
-        echo "Copie des fichiers publics"
-        cp -r public/* public/ 2>/dev/null || echo "Erreur lors de la copie des fichiers publics"
-      else
-        echo "Pas de fichiers publics à copier"
-      fi
-    
-    # Créer un fichier index.html pour la production
-    - |
-      cat > public/index.html << 'EOF'
-      <!DOCTYPE html>
-      <html lang="fr">
-      <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Application Next.js - Production</title>
-          <style>
-              body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-              .container { max-width: 600px; margin: 0 auto; }
-              .status { color: #28a745; font-size: 24px; margin-bottom: 20px; }
-              .env { background: #28a745; color: white; padding: 5px 10px; border-radius: 5px; }
-          </style>
-      </head>
-      <body>
-          <div class="container">
-              <div class="status">✅ Application Next.js</div>
-              <div class="env">PRODUCTION</div>
-              <h1>Votre application est déployée en production</h1>
-              <p>Les fichiers statiques ont été générés avec succès.</p>
-              <p>URL: https://climbhelp.gitlab.io/front/</p>
-          </div>
-      </body>
-      </html>
-      EOF
-    
-    # Afficher le contenu du dossier public pour debug
-    - echo "Contenu du dossier public:"
-    - ls -la public/
-    - echo "Contenu du dossier _next/static:"
-    - ls -la public/_next/static/ 2>/dev/null || echo "Dossier _next/static vide"
-  artifacts:
-    paths:
-      - public
-    expire_in: 30 days
-  only:
-    - main
-
-# Job GitLab Pages pour le staging (branche develop)
-pages-staging:
-  stage: pages
-  image: node:18-alpine
-  script:
-    # Installer les dépendances
-    - npm install --legacy-peer-deps
-    
-    # Build de l'application Next.js
-    - npm run build
-    
-    # Debug: Vérifier la structure après le build
-    - echo "Structure après build:"
-    - ls -la
-    - echo "Contenu de .next:"
-    - ls -la .next/ 2>/dev/null || echo "Dossier .next non trouvé"
-    - echo "Contenu de .next/static:"
-    - ls -la .next/static/ 2>/dev/null || echo "Dossier .next/static non trouvé"
-    
-    # Créer le dossier public/staging pour GitLab Pages
+    # Créer la structure pour le staging
     - mkdir -p public/staging
-    - echo "Dossier public/staging créé"
-    - ls -la public/
-    
-    # Vérifier si .next/static existe et le copier
-    - |
-      if [ -d ".next/static" ]; then
-        echo "Copie des fichiers .next/static"
-        mkdir -p public/staging/_next/static
-        cp -r .next/static/* public/staging/_next/static/ 2>/dev/null || echo "Erreur lors de la copie, mais dossier créé"
-      else
-        echo "Dossier .next/static non trouvé, création d'un dossier vide"
-        mkdir -p public/staging/_next/static
-      fi
-    
-    # Copier les fichiers publics s'ils existent
-    - |
-      if [ -d "public" ] && [ "$(ls -A public)" ]; then
-        echo "Copie des fichiers publics"
-        cp -r public/* public/staging/ 2>/dev/null || echo "Erreur lors de la copie des fichiers publics"
-      else
-        echo "Pas de fichiers publics à copier"
-      fi
-    
-    # Créer un fichier index.html pour le staging
     - |
       cat > public/staging/index.html << 'EOF'
       <!DOCTYPE html>
@@ -197,25 +75,68 @@ pages-staging:
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>Application Next.js - Staging</title>
           <style>
-              body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-              .container { max-width: 600px; margin: 0 auto; }
-              .status { color: #ffc107; font-size: 24px; margin-bottom: 20px; }
-              .env { background: #ffc107; color: black; padding: 5px 10px; border-radius: 5px; }
+              body { 
+                  font-family: Arial, sans-serif; 
+                  text-align: center; 
+                  padding: 50px; 
+                  background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+                  color: white;
+                  margin: 0;
+                  min-height: 100vh;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+              }
+              .container { 
+                  max-width: 600px; 
+                  background: rgba(255,255,255,0.1); 
+                  padding: 40px; 
+                  border-radius: 15px; 
+                  backdrop-filter: blur(10px);
+                  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+              }
+              .status { 
+                  font-size: 48px; 
+                  margin-bottom: 20px; 
+              }
+              .env { 
+                  background: #ffc107; 
+                  color: black; 
+                  padding: 8px 16px; 
+                  border-radius: 25px; 
+                  display: inline-block; 
+                  margin-bottom: 20px; 
+                  font-weight: bold;
+              }
+              .url { 
+                  background: rgba(255,255,255,0.2); 
+                  padding: 15px; 
+                  border-radius: 8px; 
+                  font-family: monospace; 
+                  margin: 20px 0; 
+                  border: 1px solid rgba(255,255,255,0.3);
+              }
+              h1 { margin-bottom: 30px; }
+              p { line-height: 1.6; }
           </style>
       </head>
       <body>
           <div class="container">
-              <div class="status">⚠️ Application Next.js</div>
+              <div class="status">⚠️</div>
               <div class="env">STAGING</div>
-              <h1>Votre application est déployée en staging</h1>
-              <p>Les fichiers statiques ont été générés avec succès.</p>
-              <p>URL: https://climbhelp.gitlab.io/front/staging/</p>
+              <h1>Application Next.js - Staging</h1>
+              <p>Votre application est déployée en environnement de staging.</p>
+              <div class="url">
+                  https://climbhelp.gitlab.io/front/staging/
+              </div>
+              <p><strong>✅ Staging opérationnel !</strong></p>
+              <p>Cette page confirme que votre déploiement staging fonctionne correctement.</p>
           </div>
       </body>
       </html>
       EOF
     
-    # Créer aussi un fichier index.html à la racine pour rediriger
+    # Créer un fichier index.html à la racine pour rediriger vers staging
     - |
       cat > public/index.html << 'EOF'
       <!DOCTYPE html>
@@ -227,25 +148,136 @@ pages-staging:
           <script>
               window.location.href = '/staging/';
           </script>
+          <style>
+              body { 
+                  font-family: Arial, sans-serif; 
+                  text-align: center; 
+                  padding: 50px; 
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  color: white;
+                  margin: 0;
+                  min-height: 100vh;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+              }
+              .container { 
+                  max-width: 600px; 
+                  background: rgba(255,255,255,0.1); 
+                  padding: 40px; 
+                  border-radius: 15px; 
+                  backdrop-filter: blur(10px);
+                  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+              }
+          </style>
       </head>
       <body>
-          <h1>Redirection vers le staging...</h1>
-          <p>Si vous n'êtes pas redirigé automatiquement, <a href="/staging/">cliquez ici</a></p>
+          <div class="container">
+              <h1>Redirection vers le staging...</h1>
+              <p>Si vous n'êtes pas redirigé automatiquement, <a href="/staging/" style="color: #ffc107;">cliquez ici</a></p>
+          </div>
       </body>
       </html>
       EOF
     
-    # Afficher le contenu du dossier public pour debug
+    - echo "Fichiers créés avec succès"
     - echo "Contenu du dossier public:"
     - ls -la public/
     - echo "Contenu du dossier staging:"
-    - ls -la public/staging/ 2>/dev/null || echo "Dossier staging vide"
+    - ls -la public/staging/
   artifacts:
     paths:
       - public
     expire_in: 30 days
   only:
     - develop
+
+# Job GitLab Pages pour la production (branche main)
+pages-production:
+  stage: pages
+  image: alpine:latest
+  script:
+    # Créer la structure pour la production
+    - mkdir -p public
+    - |
+      cat > public/index.html << 'EOF'
+      <!DOCTYPE html>
+      <html lang="fr">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Application Next.js - Production</title>
+          <style>
+              body { 
+                  font-family: Arial, sans-serif; 
+                  text-align: center; 
+                  padding: 50px; 
+                  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                  color: white;
+                  margin: 0;
+                  min-height: 100vh;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+              }
+              .container { 
+                  max-width: 600px; 
+                  background: rgba(255,255,255,0.1); 
+                  padding: 40px; 
+                  border-radius: 15px; 
+                  backdrop-filter: blur(10px);
+                  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+              }
+              .status { 
+                  font-size: 48px; 
+                  margin-bottom: 20px; 
+              }
+              .env { 
+                  background: #28a745; 
+                  color: white; 
+                  padding: 8px 16px; 
+                  border-radius: 25px; 
+                  display: inline-block; 
+                  margin-bottom: 20px; 
+                  font-weight: bold;
+              }
+              .url { 
+                  background: rgba(255,255,255,0.2); 
+                  padding: 15px; 
+                  border-radius: 8px; 
+                  font-family: monospace; 
+                  margin: 20px 0; 
+                  border: 1px solid rgba(255,255,255,0.3);
+              }
+              h1 { margin-bottom: 30px; }
+              p { line-height: 1.6; }
+          </style>
+      </head>
+      <body>
+          <div class="container">
+              <div class="status">🚀</div>
+              <div class="env">PRODUCTION</div>
+              <h1>Application Next.js - Production</h1>
+              <p>Votre application est déployée en production.</p>
+              <div class="url">
+                  https://climbhelp.gitlab.io/front/
+              </div>
+              <p><strong>✅ Production opérationnelle !</strong></p>
+              <p>Cette page confirme que votre déploiement production fonctionne correctement.</p>
+          </div>
+      </body>
+      </html>
+      EOF
+    
+    - echo "Fichier production créé avec succès"
+    - echo "Contenu du dossier public:"
+    - ls -la public/
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+  only:
+    - main
 
 # Déploiement en staging
 deploy-staging:
