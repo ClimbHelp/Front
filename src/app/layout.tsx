@@ -32,16 +32,14 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} flex flex-col min-h-screen`}>
         <StyledComponentsRegistry>
-          <AuthProvider>
-            <ChatbotProvider>
-              <Header />
-              <main className="flex-1">
-                {children}
-              </main>
-              <Footer />
-              <ChatBot />
-            </ChatbotProvider>
-          </AuthProvider>
+          <ChatbotProvider>
+            <Header />
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+            <ChatBot />
+          </ChatbotProvider>
         </StyledComponentsRegistry>
       </body>
     </html>
