@@ -13,5 +13,6 @@
       "main": true,
       "develop": true
     }
-  }
+  },
+  "buildCommand": "npm install --legacy-peer-deps && npm run build"
 }
