@@ -30,7 +30,7 @@
 .header {
   background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
   color: white;
-  padding: 40px 40px;
+  padding: 40px 40px 50px 40px;
   position: relative;
   overflow: hidden;
 }
