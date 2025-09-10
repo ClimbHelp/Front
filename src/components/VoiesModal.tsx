@@ -51,7 +51,7 @@ export default function VoiesModal({ isOpen, onClose, voies, salleName, salleId 
       
       // Filtre par type de voie
       if (filterTypeVoie && filterTypeVoie !== 'Tous') {
-        if (voie.type_de_voie && voie.type_de_voie !== filterTypeVoie.toLowerCase()) {
+        if (voie.type_de_voie && voie.type_de_voie !== filterTypeVoie) {
           return false;
         }
       }
@@ -192,36 +192,41 @@ export default function VoiesModal({ isOpen, onClose, voies, salleName, salleId 
                   onChange={(e) => setFilterCotation(e.target.value)}
                 >
                   <option value="">Toutes les cotations</option>
-                  <option value="3a">3a</option>
-                  <option value="3b">3b</option>
-                  <option value="3c">3c</option>
-                  <option value="4a">4a</option>
-                  <option value="4b">4b</option>
-                  <option value="4c">4c</option>
-                  <option value="5a">5a</option>
-                  <option value="5a+">5a+</option>
-                  <option value="5b">5b</option>
-                  <option value="5b+">5b+</option>
-                  <option value="5c">5c</option>
-                  <option value="5c+">5c+</option>
-                  <option value="6a">6a</option>
-                  <option value="6a+">6a+</option>
-                  <option value="6b">6b</option>
-                  <option value="6b+">6b+</option>
-                  <option value="6c">6c</option>
-                  <option value="6c+">6c+</option>
-                  <option value="7a">7a</option>
-                  <option value="7a+">7a+</option>
-                  <option value="7b">7b</option>
-                  <option value="7b+">7b+</option>
-                  <option value="7c">7c</option>
-                  <option value="7c+">7c+</option>
-                  <option value="8a">8a</option>
-                  <option value="8a+">8a+</option>
-                  <option value="8b">8b</option>
-                  <option value="8b+">8b+</option>
-                  <option value="8c">8c</option>
-                  <option value="8c+">8c+</option>
+                  <optgroup label="Débutant">
+                    <option value="3a">3a</option>
+                    <option value="3b">3b</option>
+                    <option value="3c">3c</option>
+                    <option value="4a">4a</option>
+                    <option value="4b">4b</option>
+                    <option value="4c">4c</option>
+                  </optgroup>
+                  <optgroup label="Intermédiaire">
+                    <option value="5a">5a</option>
+                    <option value="5b">5b</option>
+                    <option value="5c">5c</option>
+                    <option value="6a">6a</option>
+                    <option value="6a+">6a+</option>
+                    <option value="6b">6b</option>
+                    <option value="6b+">6b+</option>
+                    <option value="6c">6c</option>
+                    <option value="6c+">6c+</option>
+                  </optgroup>
+                  <optgroup label="Avancé">
+                    <option value="7a">7a</option>
+                    <option value="7a+">7a+</option>
+                    <option value="7b">7b</option>
+                    <option value="7b+">7b+</option>
+                    <option value="7c">7c</option>
+                    <option value="7c+">7c+</option>
+                  </optgroup>
+                  <optgroup label="Expert">
+                    <option value="8a">8a</option>
+                    <option value="8a+">8a+</option>
+                    <option value="8b">8b</option>
+                    <option value="8b+">8b+</option>
+                    <option value="8c">8c</option>
+                    <option value="8c+">8c+</option>
+                  </optgroup>
                 </select>
               </div>
 
@@ -259,9 +264,16 @@ export default function VoiesModal({ isOpen, onClose, voies, salleName, salleId 
                   onChange={(e) => setFilterTypeVoie(e.target.value)}
                 >
                   <option>Tous</option>
-                  <option>Ouvertes</option>
-                  <option>Fermées</option>
-                  <option>En maintenance</option>
+                  <option>Bloc</option>
+                  <option>Voie</option>
+                  <option>Dévers</option>
+                  <option>Dalle</option>
+                  <option>Surplomb</option>
+                  <option>Dièdre</option>
+                  <option>Fissure</option>
+                  <option>Réglette</option>
+                  <option>Pince</option>
+                  <option>Goutte d'eau</option>
                 </select>
               </div>
 
@@ -355,15 +367,25 @@ export default function VoiesModal({ isOpen, onClose, voies, salleName, salleId 
                       <div className={styles.voieInfo}>
                         <span className={styles.infoLabel}>Type:</span>
                         <span className={styles.infoValue}>
-                          {voie.type_de_voie === 'ouverte' ? '🟢 Ouverte' : 
-                           voie.type_de_voie === 'fermee' ? '🔴 Fermée' : 
-                           voie.type_de_voie === 'maintenance' ? '🟡 En maintenance' : voie.type_de_voie}
+                          {voie.type_de_voie === 'Bloc' ? '🧗‍♀️ Bloc' :
+                           voie.type_de_voie === 'Voie' ? '⛰️ Voie' :
+                           voie.type_de_voie === 'Dévers' ? '📐 Dévers' :
+                           voie.type_de_voie === 'Dalle' ? '🏔️ Dalle' :
+                           voie.type_de_voie === 'Surplomb' ? '🪨 Surplomb' :
+                           voie.type_de_voie === 'Dièdre' ? '📏 Dièdre' :
+                           voie.type_de_voie === 'Fissure' ? '🔍 Fissure' :
+                           voie.type_de_voie === 'Réglette' ? '📋 Réglette' :
+                           voie.type_de_voie === 'Pince' ? '🤏 Pince' : voie.type_de_voie}
                         </span>
                       </div>
                     )}
                     
-                    {voie.description && (
+                    {voie.description ? (
                       <p className={styles.voieDescription}>{voie.description}</p>
+                    ) : (
+                      <p className={styles.voieDescription} style={{ fontStyle: 'italic', color: '#888' }}>
+                        Aucune description pour cette voie.
+                      </p>
                     )}
                   </div>
                 ))}

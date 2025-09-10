@@ -42,7 +42,18 @@ export default function SalleDetailPage() {
   const [error, setError] = useState('');
   const [isVoiesModalOpen, setIsVoiesModalOpen] = useState(false);
 
-
+  const getDifficultyColor = (difficulte: string) => {
+    const colors: { [key: string]: string } = {
+      '3a': '#00ff00', '3b': '#00ff00', '3c': '#00ff00',
+      '4a': '#ffff00', '4b': '#ffff00', '4c': '#ffff00',
+      '5a': '#ff8000', '5b': '#ff8000', '5c': '#ff8000',
+      '6a': '#ff0000', '6b': '#ff0000', '6c': '#ff0000',
+      '7a': '#800080', '7b': '#800080', '7c': '#800080',
+      '8a': '#000000', '8b': '#000000', '8c': '#000000',
+    };
+    const base = difficulte.toLowerCase().replace('+', '');
+    return colors[base] || '#666';
+  };
 
   useEffect(() => {
     if (salleId) {
@@ -182,7 +193,60 @@ export default function SalleDetailPage() {
         </div>
         
         <div className={styles.voiesPreview}>
-                     <p>Cliquez sur le bouton ci-dessus pour voir toutes les voies d&apos;escalade avec filtres avancés.</p>
+          {salle.voies.length > 0 ? (
+            <div className={styles.showcaseVoies}>
+              {salle.voies
+                .sort(() => 0.5 - Math.random()) // Mélange aléatoire
+                .slice(0, 3) // Prend les 3 premières
+                .map((voie) => (
+                  <div key={voie.id} className={styles.showcaseVoie}>
+                    <div className={styles.voieHeader}>
+                      <h3 className={styles.voieName}>
+                        {voie.nom ? voie.nom : `Voie #${voie.id}`}
+                      </h3>
+                      {voie.cotation && (
+                        <span 
+                          className={styles.difficulty}
+                          style={{ backgroundColor: getDifficultyColor(voie.cotation) }}
+                        >
+                          {voie.cotation}
+                        </span>
+                      )}
+                    </div>
+                    
+                    {voie.ouvreur && (
+                      <div className={styles.voieInfo}>
+                        <span className={styles.infoLabel}>Ouvreur:</span>
+                        <span className={styles.infoValue}>{voie.ouvreur}</span>
+                      </div>
+                    )}
+                    
+                    {voie.type_de_voie && (
+                      <div className={styles.voieInfo}>
+                        <span className={styles.infoLabel}>Type:</span>
+                        <span className={styles.infoValue}>
+                          {voie.type_de_voie === 'Bloc' ? '🧗‍♀️ Bloc' :
+                           voie.type_de_voie === 'Voie' ? '⛰️ Voie' :
+                           voie.type_de_voie === 'Dévers' ? '📐 Dévers' :
+                           voie.type_de_voie === 'Dalle' ? '🏔️ Dalle' :
+                           voie.type_de_voie === 'Surplomb' ? '🪨 Surplomb' :
+                           voie.type_de_voie === 'Dièdre' ? '📏 Dièdre' :
+                           voie.type_de_voie === 'Fissure' ? '🔍 Fissure' :
+                           voie.type_de_voie === 'Réglette' ? '📋 Réglette' :
+                           voie.type_de_voie === 'Pince' ? '🤏 Pince' : voie.type_de_voie}
+                        </span>
+                      </div>
+                    )}
+                    
+                    {voie.description && (
+                      <p className={styles.voieDescription}>{voie.description}</p>
+                    )}
+                  </div>
+                ))}
+            </div>
+          ) : (
+            <p>Aucune voie disponible pour le moment.</p>
+          )}
         </div>
       </div>
 

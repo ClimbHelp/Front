@@ -14,12 +14,9 @@ export default function CreateVoieModal({ isOpen, onClose, onSuccess, salleId }:
   const [formData, setFormData] = useState({
     nom: '',
     cotation: '',
-    hauteur: '',
-    type_de_voie: 'ouverte',
+    type_de_voie: '',
     ouvreur: '',
-    date_ouverture: '',
-    description: '',
-    couleur: '#48bb78'
+    description: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -33,27 +30,49 @@ export default function CreateVoieModal({ isOpen, onClose, onSuccess, salleId }:
     setIsSubmitting(true);
 
     try {
-      // Simulation d'appel API
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const API_BASE_URL = process.env.NEXT_PUBLIC_BDD_SERVICE_URL || 'http://localhost:3001';
       
-      setShowSuccess(true);
-      setTimeout(() => {
-        onSuccess();
-        onClose();
-        setShowSuccess(false);
-        setFormData({
-          nom: '',
-          cotation: '',
-          hauteur: '',
-          type_de_voie: 'ouverte',
-          ouvreur: '',
-          date_ouverture: '',
-          description: '',
-          couleur: '#48bb78'
-        });
-      }, 2000);
+      const response = await fetch(`${API_BASE_URL}/api/voies`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          salle_id: salleId,
+          nom: formData.nom,
+          cotation: formData.cotation,
+          type_de_voie: formData.type_de_voie,
+          ouvreur: formData.ouvreur,
+          description: formData.description
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      if (result.success) {
+        setShowSuccess(true);
+        setTimeout(() => {
+          onSuccess();
+          onClose();
+          setShowSuccess(false);
+          setFormData({
+            nom: '',
+            cotation: '',
+            type_de_voie: '',
+            ouvreur: '',
+            description: ''
+          });
+        }, 2000);
+      } else {
+        throw new Error(result.error || 'Erreur lors de la création de la voie');
+      }
     } catch (error) {
       console.error('Erreur lors de la création:', error);
+      alert('Erreur lors de la création de la voie. Veuillez réessayer.');
     } finally {
       setIsSubmitting(false);
     }
@@ -99,7 +118,7 @@ export default function CreateVoieModal({ isOpen, onClose, onSuccess, salleId }:
                   </div>
                 </div>
 
-                <div className={styles.formTriple}>
+                <div className={styles.formRow}>
                   <div className={styles.formGroup}>
                     <label className={`${styles.formLabel} ${styles.required}`}>Cotation</label>
                     <select 
@@ -147,21 +166,6 @@ export default function CreateVoieModal({ isOpen, onClose, onSuccess, salleId }:
                     </select>
                   </div>
 
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Hauteur (m)</label>
-                    <div className={styles.inputGroup}>
-                      <span className={styles.inputIcon}>📏</span>
-                      <input 
-                        type="number" 
-                        className={styles.formInput} 
-                        placeholder="25" 
-                        min="1" 
-                        max="500"
-                        value={formData.hauteur}
-                        onChange={(e) => handleInputChange('hauteur', e.target.value)}
-                      />
-                    </div>
-                  </div>
 
                   <div className={styles.formGroup}>
                     <label className={`${styles.formLabel} ${styles.required}`}>Type de voie</label>
@@ -171,39 +175,32 @@ export default function CreateVoieModal({ isOpen, onClose, onSuccess, salleId }:
                       onChange={(e) => handleInputChange('type_de_voie', e.target.value)}
                       required
                     >
-                      <option value="ouverte">🟢 Ouverte</option>
-                      <option value="fermee">🔴 Fermée</option>
-                      <option value="maintenance">🟡 En maintenance</option>
+                      <option value="">Sélectionner un type</option>
+                      <option value="Bloc">🧗‍♀️ Bloc</option>
+                      <option value="Voie">⛰️ Voie</option>
+                      <option value="Dévers">📐 Dévers</option>
+                      <option value="Dalle">🏔️ Dalle</option>
+                      <option value="Surplomb">🪨 Surplomb</option>
+                      <option value="Dièdre">📏 Dièdre</option>
+                      <option value="Fissure">🔍 Fissure</option>
+                      <option value="Réglette">📋 Réglette</option>
+                      <option value="Pince">🤏 Pince</option>
+                      <option value="Goutte d'eau">💧 Goutte d'eau</option>
                     </select>
                   </div>
                 </div>
 
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Ouvreur</label>
-                    <div className={styles.inputGroup}>
-                      <span className={styles.inputIcon}>👤</span>
-                      <input 
-                        type="text" 
-                        className={styles.formInput} 
-                        placeholder="Ex: Marie Dubois"
-                        value={formData.ouvreur}
-                        onChange={(e) => handleInputChange('ouvreur', e.target.value)}
-                      />
-                    </div>
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Date d&apos;ouverture</label>
-                    <div className={styles.inputGroup}>
-                      <span className={styles.inputIcon}>📅</span>
-                      <input 
-                        type="date" 
-                        className={styles.formInput}
-                        value={formData.date_ouverture}
-                        onChange={(e) => handleInputChange('date_ouverture', e.target.value)}
-                      />
-                    </div>
+                <div className={styles.formGroup}>
+                  <label className={`${styles.formLabel} ${styles.required}`}>Ouvreur</label>
+                  <div className={styles.inputGroup}>
+                    <span className={styles.inputIcon}>👤</span>
+                    <input 
+                      type="text" 
+                      className={styles.formInput} 
+                      placeholder="Ex: Marie Dubois"
+                      value={formData.ouvreur}
+                      onChange={(e) => handleInputChange('ouvreur', e.target.value)}
+                    />
                   </div>
                 </div>
               </div>
@@ -223,45 +220,9 @@ export default function CreateVoieModal({ isOpen, onClose, onSuccess, salleId }:
                     value={formData.description}
                     onChange={(e) => handleInputChange('description', e.target.value)}
                   />
-                  <div className={styles.helpText}>Décrivez les mouvements clés, les difficultés techniques, les conseils tactiques</div>
                 </div>
               </div>
 
-              {/* Section 3: Apparence */}
-              <div className={styles.formSection}>
-                <div className={styles.sectionTitle}>
-                  <div className={styles.sectionIcon}>🎨</div>
-                  Couleur des prises
-                </div>
-                
-                <div className={styles.formGroup}>
-                  <label className={`${styles.formLabel} ${styles.required}`}>Couleur principale</label>
-                  <div className={styles.colorPickerSection}>
-                    <div className={styles.colorGrid}>
-                      {[
-                        { color: '#f56565', name: 'Rouge' },
-                        { color: '#ed8936', name: 'Orange' },
-                        { color: '#ecc94b', name: 'Jaune' },
-                        { color: '#48bb78', name: 'Vert' },
-                        { color: '#4299e1', name: 'Bleu' },
-                        { color: '#667eea', name: 'Indigo' },
-                        { color: '#9f7aea', name: 'Violet' },
-                        { color: '#ed64a6', name: 'Rose' },
-                        { color: '#4a5568', name: 'Gris' },
-                        { color: '#2d3748', name: 'Noir' }
-                      ].map(({ color, name }) => (
-                        <div 
-                          key={color}
-                          className={`${styles.colorOption} ${formData.couleur === color ? styles.selected : ''}`}
-                          style={{ background: color }}
-                          onClick={() => handleInputChange('couleur', color)}
-                          title={name}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
             </form>
           ) : (
             <div className={`${styles.successAnimation} ${styles.show}`}>
