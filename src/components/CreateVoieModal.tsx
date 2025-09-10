@@ -279,7 +279,7 @@ export default function CreateVoieModal({ isOpen, onClose, onSuccess, salleId }:
           {!showSuccess && (
             <button 
               type="submit" 
-              className={styles.btnPrimary} 
+              className={styles.createVoieBtn} 
               onClick={handleSubmit}
               disabled={isSubmitting}
             >
