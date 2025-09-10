@@ -277,9 +277,8 @@
 }
 
 .btnSecondary {
-  background: white;
-  color: #4a5568;
-  border: 2px solid #e2e8f0;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
 }
 
 .btnSecondary:hover {
@@ -311,7 +310,7 @@
   box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
 }
 
-.createVoie:hover {
+.createVoieBtn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
 }
