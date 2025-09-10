@@ -273,7 +273,6 @@ export default function VoiesModal({ isOpen, onClose, voies, salleName, salleId 
                   <option>Fissure</option>
                   <option>Réglette</option>
                   <option>Pince</option>
-                  <option>Goutte d'eau</option>
                 </select>
               </div>
 

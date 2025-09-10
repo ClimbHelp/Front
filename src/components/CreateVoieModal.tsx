@@ -185,7 +185,6 @@ export default function CreateVoieModal({ isOpen, onClose, onSuccess, salleId }:
                       <option value="Fissure">🔍 Fissure</option>
                       <option value="Réglette">📋 Réglette</option>
                       <option value="Pince">🤏 Pince</option>
-                      <option value="Goutte d'eau">💧 Goutte d'eau</option>
                     </select>
                   </div>
                 </div>
