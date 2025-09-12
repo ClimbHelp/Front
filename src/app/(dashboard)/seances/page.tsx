@@ -195,7 +195,7 @@ export default function SeancesPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/');
+    router.push('/' as any);
   };
 
   return (
@@ -205,7 +205,7 @@ export default function SeancesPage() {
           {/* Header */}
           <div className={styles.header}>
             <h1 className={styles.title}>
-              Mes Séances d'Escalade
+              Mes Séances d&apos;Escalade
             </h1>
             <p className={styles.subtitle}>
               Suivez vos progrès et vos performances
@@ -359,7 +359,7 @@ export default function SeancesPage() {
                 Commencez votre aventure en escalade en créant votre première séance !
               </p>
               <button
-                onClick={() => router.push('/salles')}
+                onClick={() => router.push('/salles' as any)}
                 className={styles.emptyButton}
               >
                 Voir les salles
@@ -370,7 +370,7 @@ export default function SeancesPage() {
           {/* Navigation */}
           <div className={styles.navigation}>
             <button
-              onClick={() => router.push('/profile')}
+              onClick={() => router.push('/profile' as any)}
               className={`${styles.navButton} ${styles.primary}`}
             >
               Retour au profil
