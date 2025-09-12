@@ -304,6 +304,24 @@ export default function ProfilePage() {
 
           <div style={{ textAlign: 'center', marginTop: '2rem' }}>
             <button
+              onClick={() => router.push('/seances')}
+              style={{
+                background: 'linear-gradient(135deg, #e74c3c, #c0392b)',
+                color: 'white',
+                padding: '0.875rem 2rem',
+                border: 'none',
+                borderRadius: '12px',
+                fontWeight: 600,
+                fontSize: '1rem',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 4px 15px rgba(231, 76, 60, 0.3)',
+                marginRight: '1rem'
+              }}
+            >
+              Voir mes séances
+            </button>
+            <button
               onClick={() => router.push('/profile/edit')}
               style={{
                 background: 'linear-gradient(135deg, #3498db, #2980b9)',
