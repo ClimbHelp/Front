@@ -12,7 +12,21 @@ import {
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login } = useAuth();
+  
+  // Vérifier si l'AuthProvider est disponible
+  let login;
+  try {
+    const auth = useAuth();
+    login = auth.login;
+  } catch (error) {
+    console.error('AuthProvider not available:', error);
+    // Fallback si l'AuthProvider n'est pas disponible
+    login = (token: string, userData: any) => {
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('userData', JSON.stringify(userData));
+      router.push('/');
+    };
+  }
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");

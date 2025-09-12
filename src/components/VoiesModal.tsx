@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import styles from './VoiesModal.module.css';
 import CreateVoieModal from './CreateVoieModal';
 import EditVoieModal from './EditVoieModal';
+import { useAuth } from '../contexts/AuthContext';
 
 interface Voie {
   id: number;
@@ -21,9 +22,12 @@ interface VoiesModalProps {
   voies: Voie[];
   salleName: string;
   salleId: number;
+  salleAdminId?: number;
 }
 
-export default function VoiesModal({ isOpen, onClose, voies, salleName, salleId }: VoiesModalProps) {
+export default function VoiesModal({ isOpen, onClose, voies, salleName, salleId, salleAdminId }: VoiesModalProps) {
+  const { isSalleAdmin } = useAuth();
+  
   const [filterCotation, setFilterCotation] = useState('');
   const [filterSort, setFilterSort] = useState('Par nom');
   const [filterOrder, setFilterOrder] = useState('Croissant');
@@ -138,7 +142,6 @@ export default function VoiesModal({ isOpen, onClose, voies, salleName, salleId 
 
   const handleModalSuccess = () => {
     // Ici on pourrait rafraîchir les données
-    console.log('Modal action successful');
   };
 
   // Fermer le modal avec Escape
@@ -174,9 +177,11 @@ export default function VoiesModal({ isOpen, onClose, voies, salleName, salleId 
                 </div>
               </div>
               <div className={styles.headerActions}>
-                <button className={styles.createButton} onClick={handleCreateVoie}>
-                  ✨ Créer une voie
-                </button>
+                {isSalleAdmin(salleAdminId) && (
+                  <button className={styles.createButton} onClick={handleCreateVoie}>
+                    ✨ Créer une voie
+                  </button>
+                )}
                 <div className={styles.routeCount}>{filteredVoies.length} voies</div>
               </div>
             </div>
@@ -345,13 +350,15 @@ export default function VoiesModal({ isOpen, onClose, voies, salleName, salleId 
                             {voie.cotation}
                           </span>
                         )}
-                        <button 
-                          className={styles.editButton}
-                          onClick={() => handleEditVoie(voie)}
-                          title="Modifier cette voie"
-                        >
-                          ✏️
-                        </button>
+                        {isSalleAdmin(salleAdminId) && (
+                          <button 
+                            className={styles.editButton}
+                            onClick={() => handleEditVoie(voie)}
+                            title="Modifier cette voie"
+                          >
+                            ✏️
+                          </button>
+                        )}
                       </div>
                     </div>
                     

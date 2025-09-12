@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Map from '../../../../components/Map';
 import VoiesModal from '../../../../components/VoiesModal';
+import { useAuth } from '../../../../contexts/AuthContext';
 import styles from './salle-detail.module.css';
 
 interface Voie {
@@ -28,6 +29,7 @@ interface Salle {
   description?: string;
   email?: string;
   telephone?: string;
+  admin_id?: number; // ID de l'administrateur de la salle
   localisation?: number; // ID de la localisation
   localisation_data?: Localisation; // Données de localisation
   voies: Voie[];
@@ -36,6 +38,7 @@ interface Salle {
 export default function SalleDetailPage() {
   const params = useParams();
   const salleId = params.id as string;
+  const { user, isSalleAdmin } = useAuth();
   
   const [salle, setSalle] = useState<Salle | null>(null);
   const [loading, setLoading] = useState(true);
@@ -60,6 +63,7 @@ export default function SalleDetailPage() {
       fetchSalleDetail();
     }
   }, [salleId]);
+
 
   const fetchSalleDetail = async () => {
     try {
@@ -256,6 +260,7 @@ export default function SalleDetailPage() {
         voies={salle.voies}
         salleName={salle.nom}
         salleId={salle.id}
+        salleAdminId={salle.admin_id}
       />
     </div>
   );

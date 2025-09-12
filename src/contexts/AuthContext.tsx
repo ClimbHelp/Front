@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
@@ -6,15 +6,14 @@ interface User {
   id: string;
   email: string;
   name: string;
-  avatar?: string;
 }
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (token: string, userData: any) => void;
   logout: () => void;
-  register: (email: string, password: string, name: string) => Promise<void>;
+  isSalleAdmin: (salleAdminId?: number) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -36,21 +35,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Vérifier si l'utilisateur est connecté au chargement
-    const checkAuth = async () => {
+    // Vérifier si l'utilisateur est connecté via localStorage
+    const checkAuth = () => {
       try {
-        // Simulation de vérification d'authentification
         const token = localStorage.getItem('authToken');
-        if (token) {
-          // Ici, vous feriez un appel API pour vérifier le token
+        const userInfo = localStorage.getItem('userInfo');
+        
+        if (token && userInfo) {
+          const parsedUserInfo = JSON.parse(userInfo);
           setUser({
-            id: '1',
-            email: 'user@example.com',
-            name: 'Utilisateur Test'
+            id: parsedUserInfo.id.toString(),
+            email: parsedUserInfo.email,
+            name: parsedUserInfo.username || parsedUserInfo.name || 'Utilisateur'
           });
         }
       } catch (error) {
         console.error('Erreur lors de la vérification de l\'authentification:', error);
+        // Nettoyer les données corrompues
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('userInfo');
       } finally {
         setLoading(false);
       }
@@ -59,53 +62,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
     checkAuth();
   }, []);
 
-  const login = async (email: string, _password: string) => {
-    try {
-      setLoading(true);
-      // Simulation d'un appel API de connexion
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const userData: User = {
-        id: '1',
-        email,
-        name: email.split('@')[0]
-      };
-      
-      setUser(userData);
-      localStorage.setItem('authToken', 'fake-token');
-    } catch (error) {
-      console.error('Erreur lors de la connexion:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
+  const login = (token: string, userData: any) => {
+    // Sauvegarder les données dans localStorage
+    localStorage.setItem('authToken', token);
+    localStorage.setItem('userInfo', JSON.stringify(userData));
+    
+    // Mettre à jour l'état utilisateur
+    setUser({
+      id: userData.id.toString(),
+      email: userData.email,
+      name: userData.username || userData.name
+    });
   };
 
   const logout = () => {
-    setUser(null);
     localStorage.removeItem('authToken');
+    localStorage.removeItem('userInfo');
+    setUser(null);
   };
 
-  const register = async (email: string, _password: string, name: string) => {
-    try {
-      setLoading(true);
-      // Simulation d'un appel API d'inscription
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const userData: User = {
-        id: '1',
-        email,
-        name
-      };
-      
-      setUser(userData);
-      localStorage.setItem('authToken', 'fake-token');
-    } catch (error) {
-      console.error('Erreur lors de l\'inscription:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
+  const isSalleAdmin = (salleAdminId?: number) => {
+    if (!user || !salleAdminId) return false;
+    return parseInt(user.id) === salleAdminId;
   };
 
   const value = {
@@ -113,7 +91,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     loading,
     login,
     logout,
-    register
+    isSalleAdmin
   };
 
   return (
@@ -121,4 +99,4 @@ export function AuthProvider({ children }: AuthProviderProps) {
       {children}
     </AuthContext.Provider>
   );
-} 
+}
