@@ -439,6 +439,7 @@ export default function SeanceNouvellePage() {
                             fontSize: "1rem",
                             minHeight: 60,
                             background: "#f8f9fa",
+                            color: "#2c3e50",
                           }}
                         />
                       </div>
