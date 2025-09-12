@@ -11,9 +11,6 @@ interface Voie {
   description?: string;
   ouvreur?: string;
   type_de_voie?: string;
-  hauteur?: number;
-  date_ouverture?: string;
-  couleur?: string;
 }
 
 interface EditVoieModalProps {
@@ -28,12 +25,9 @@ export default function EditVoieModal({ isOpen, onClose, onSuccess, voie }: Edit
   const [formData, setFormData] = useState({
     nom: '',
     cotation: '',
-    hauteur: '',
-    type_de_voie: 'ouverte',
+    type_de_voie: '',
     ouvreur: '',
-    date_ouverture: '',
-    description: '',
-    couleur: '#48bb78'
+    description: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -44,12 +38,9 @@ export default function EditVoieModal({ isOpen, onClose, onSuccess, voie }: Edit
       setFormData({
         nom: voie.nom || '',
         cotation: voie.cotation || '',
-        hauteur: voie.hauteur?.toString() || '',
-        type_de_voie: voie.type_de_voie || 'ouverte',
+        type_de_voie: voie.type_de_voie || '',
         ouvreur: voie.ouvreur || '',
-        date_ouverture: voie.date_ouverture || '',
-        description: voie.description || '',
-        couleur: voie.couleur || '#48bb78'
+        description: voie.description || ''
       });
     }
   }, [voie]);
@@ -159,7 +150,7 @@ export default function EditVoieModal({ isOpen, onClose, onSuccess, voie }: Edit
                     </div>
                   </div>
 
-                  <div className={styles.formTriple}>
+                  <div className={styles.formRow}>
                     <div className={styles.formGroup}>
                       <label className={`${styles.formLabel} ${styles.required}`}>Cotation</label>
                       <select 
@@ -168,6 +159,7 @@ export default function EditVoieModal({ isOpen, onClose, onSuccess, voie }: Edit
                         onChange={(e) => handleInputChange('cotation', e.target.value)}
                         required
                       >
+                        <option value="">Sélectionner une cotation</option>
                         <optgroup label="Débutant">
                           <option value="3a">3a</option>
                           <option value="3b">3b</option>
@@ -207,21 +199,6 @@ export default function EditVoieModal({ isOpen, onClose, onSuccess, voie }: Edit
                     </div>
 
                     <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>Hauteur (m)</label>
-                      <div className={styles.inputGroup}>
-                        <span className={styles.inputIcon}>📏</span>
-                        <input 
-                          type="number" 
-                          className={styles.formInput}
-                          min="1" 
-                          max="500"
-                          value={formData.hauteur}
-                          onChange={(e) => handleInputChange('hauteur', e.target.value)}
-                        />
-                      </div>
-                    </div>
-
-                    <div className={styles.formGroup}>
                       <label className={`${styles.formLabel} ${styles.required}`}>Type de voie</label>
                       <select 
                         className={styles.formSelect}
@@ -229,38 +206,30 @@ export default function EditVoieModal({ isOpen, onClose, onSuccess, voie }: Edit
                         onChange={(e) => handleInputChange('type_de_voie', e.target.value)}
                         required
                       >
-                        <option value="ouverte">🟢 Ouverte</option>
-                        <option value="fermee">🔴 Fermée</option>
-                        <option value="maintenance">🟡 En maintenance</option>
+                        <option value="">Sélectionner un type</option>
+                        <option value="Bloc">🧗‍♀️ Bloc</option>
+                        <option value="Voie">⛰️ Voie</option>
+                        <option value="Dévers">📐 Dévers</option>
+                        <option value="Dalle">🏔️ Dalle</option>
+                        <option value="Surplomb">🪨 Surplomb</option>
+                        <option value="Dièdre">📏 Dièdre</option>
+                        <option value="Fissure">🔍 Fissure</option>
+                        <option value="Réglette">📋 Réglette</option>
+                        <option value="Pince">🤏 Pince</option>
                       </select>
                     </div>
                   </div>
 
-                  <div className={styles.formRow}>
-                    <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>Ouvreur</label>
-                      <div className={styles.inputGroup}>
-                        <span className={styles.inputIcon}>👤</span>
-                        <input 
-                          type="text" 
-                          className={styles.formInput}
-                          value={formData.ouvreur}
-                          onChange={(e) => handleInputChange('ouvreur', e.target.value)}
-                        />
-                      </div>
-                    </div>
-
-                    <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>Date d&apos;ouverture</label>
-                      <div className={styles.inputGroup}>
-                        <span className={styles.inputIcon}>📅</span>
-                        <input 
-                          type="date" 
-                          className={styles.formInput}
-                          value={formData.date_ouverture}
-                          onChange={(e) => handleInputChange('date_ouverture', e.target.value)}
-                        />
-                      </div>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Ouvreur</label>
+                    <div className={styles.inputGroup}>
+                      <span className={styles.inputIcon}>👤</span>
+                      <input 
+                        type="text" 
+                        className={styles.formInput}
+                        value={formData.ouvreur}
+                        onChange={(e) => handleInputChange('ouvreur', e.target.value)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -279,45 +248,9 @@ export default function EditVoieModal({ isOpen, onClose, onSuccess, voie }: Edit
                       value={formData.description}
                       onChange={(e) => handleInputChange('description', e.target.value)}
                     />
-                    <div className={styles.helpText}>Décrivez les mouvements clés, les difficultés techniques, les conseils tactiques</div>
                   </div>
                 </div>
 
-                {/* Section 3: Apparence */}
-                <div className={styles.formSection}>
-                  <div className={styles.sectionTitle}>
-                    <div className={styles.sectionIcon}>🎨</div>
-                    Couleur des prises
-                  </div>
-                  
-                  <div className={styles.formGroup}>
-                    <label className={`${styles.formLabel} ${styles.required}`}>Couleur principale</label>
-                    <div className={styles.colorPickerSection}>
-                      <div className={styles.colorGrid}>
-                        {[
-                          { color: '#f56565', name: 'Rouge' },
-                          { color: '#ed8936', name: 'Orange' },
-                          { color: '#ecc94b', name: 'Jaune' },
-                          { color: '#48bb78', name: 'Vert' },
-                          { color: '#4299e1', name: 'Bleu' },
-                          { color: '#667eea', name: 'Indigo' },
-                          { color: '#9f7aea', name: 'Violet' },
-                          { color: '#ed64a6', name: 'Rose' },
-                          { color: '#4a5568', name: 'Gris' },
-                          { color: '#2d3748', name: 'Noir' }
-                        ].map(({ color, name }) => (
-                          <div 
-                            key={color}
-                            className={`${styles.colorOption} ${formData.couleur === color ? styles.selected : ''}`}
-                            style={{ background: color }}
-                            onClick={() => handleInputChange('couleur', color)}
-                            title={name}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </form>
             </div>
           )}
@@ -342,20 +275,12 @@ export default function EditVoieModal({ isOpen, onClose, onSuccess, voie }: Edit
                 </div>
                 <div className={styles.routeMeta}>
                   <div className={styles.metaItem}>
-                    <div className={`${styles.statusIndicator} ${styles[`status-${formData.type_de_voie}`]}`}></div>
-                    <span>{formData.type_de_voie === 'ouverte' ? 'Ouverte' : formData.type_de_voie === 'fermee' ? 'Fermée' : 'En maintenance'}</span>
+                    <span>🏷️</span>
+                    <span>Type: {formData.type_de_voie || 'Non spécifié'}</span>
                   </div>
                   <div className={styles.metaItem}>
                     <span>👤</span>
                     <span>Ouvreur: {formData.ouvreur || 'Non spécifié'}</span>
-                  </div>
-                  <div className={styles.metaItem}>
-                    <span>📏</span>
-                    <span>Hauteur: {formData.hauteur || 'Non spécifiée'}m</span>
-                  </div>
-                  <div className={styles.metaItem}>
-                    <span>📅</span>
-                    <span>Créée le {formData.date_ouverture || 'Date inconnue'}</span>
                   </div>
                 </div>
               </div>
@@ -391,33 +316,29 @@ export default function EditVoieModal({ isOpen, onClose, onSuccess, voie }: Edit
         </div>
 
         <div className={styles.modalFooter}>
-          <div className={styles.footerLeft}>
-            <button type="button" className={styles.btnSecondary} onClick={onClose}>
-              ❌ Annuler
+          <button type="button" className={styles.btnSecondary} onClick={onClose}>
+            ❌ Annuler
+          </button>
+          {mode === 'edit' && !showSuccess && (
+            <button 
+              type="submit" 
+              className={styles.createVoieBtn} 
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? '⏳ Modification...' : '💾 Enregistrer'}
             </button>
-          </div>
-          <div className={styles.footerRight}>
-            {mode === 'edit' && !showSuccess && (
-              <button 
-                type="submit" 
-                className={styles.btnPrimary} 
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? '⏳ Modification...' : '💾 Enregistrer'}
-              </button>
-            )}
-            {mode === 'delete' && !showDeleteSuccess && (
-              <button 
-                type="button" 
-                className={styles.btnDanger} 
-                onClick={handleDelete}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? '⏳ Suppression...' : '🗑️ Supprimer définitivement'}
-              </button>
-            )}
-          </div>
+          )}
+          {mode === 'delete' && !showDeleteSuccess && (
+            <button 
+              type="button" 
+              className={styles.btnDanger} 
+              onClick={handleDelete}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? '⏳ Suppression...' : '🗑️ Supprimer définitivement'}
+            </button>
+          )}
         </div>
       </div>
     </div>
