@@ -14,7 +14,7 @@ export default function HomePage() {
               Votre compagnon d&apos;escalade
             </h1>
             <p className={styles.heroSubtitle}>
-              Suivez votre progression, découvrez de nouvelles voies et connectez-vous avec la communauté d&apos;escalade
+              Suivez votre progression, découvrez de nouvelles voies et explorez les salles d&apos;escalade
             </p>
             <div className={styles.heroActions}>
               <Link href="/register">
@@ -54,9 +54,9 @@ export default function HomePage() {
               </div>
               
               <div className={styles.featureCard}>
-                <div className={styles.featureIcon}>👥</div>
-                <h3>Communauté</h3>
-                <p>Connectez-vous avec d&apos;autres grimpeurs et partagez vos expériences</p>
+                <div className={styles.featureIcon}>🧗‍♂️</div>
+                <h3>Catalogue de voies</h3>
+                <p>Découvrez et enregistrez vos voies préférées dans chaque salle</p>
               </div>
               
               <div className={styles.featureCard}>
@@ -68,7 +68,7 @@ export default function HomePage() {
               <div className={styles.featureCard}>
                 <div className={styles.featureIcon}>📈</div>
                 <h3>Statistiques avancées</h3>
-                <p>Analysez vos performances avec des graphiques détaillés</p>
+                <p>Analysez vos performances avec des graphiques détaillés (dans le futur)</p>
               </div>
               
               <div className={styles.featureCard}>

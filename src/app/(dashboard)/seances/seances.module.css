@@ -390,3 +390,153 @@
     margin-right: 0;
   }
 }
+
+/* Pagination */
+.pagination {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  padding: 25px;
+  margin: 30px 0;
+  text-align: center;
+}
+
+.paginationInfo {
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-size: 1.1em;
+  font-weight: 600;
+}
+
+.paginationTotal {
+  color: #7f8c8d;
+  font-weight: normal;
+  margin-left: 10px;
+}
+
+.paginationControls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.paginationButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  min-width: 120px;
+}
+
+.paginationButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.paginationButton:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  opacity: 0.6;
+}
+
+.paginationNumbers {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.paginationNumber {
+  background: #f8f9fa;
+  color: #2c3e50;
+  border: 2px solid #e9ecef;
+  padding: 10px 15px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.paginationNumber:hover {
+  background: #e9ecef;
+  border-color: #667eea;
+  transform: translateY(-1px);
+}
+
+.paginationNumber.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: #667eea;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.paginationNumber.active:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Responsive pour la pagination */
+@media (max-width: 768px) {
+  .pagination {
+    padding: 20px 15px;
+    margin: 20px 0;
+  }
+  
+  .paginationInfo {
+    font-size: 1em;
+    margin-bottom: 15px;
+  }
+  
+  .paginationControls {
+    gap: 10px;
+  }
+  
+  .paginationButton {
+    padding: 10px 15px;
+    font-size: 0.9em;
+    min-width: 100px;
+  }
+  
+  .paginationNumbers {
+    gap: 5px;
+  }
+  
+  .paginationNumber {
+    padding: 8px 12px;
+    font-size: 0.9em;
+    min-width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .paginationControls {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .paginationNumbers {
+    order: -1;
+    justify-content: center;
+  }
+  
+  .paginationButton {
+    width: 100%;
+    max-width: 200px;
+  }
+}

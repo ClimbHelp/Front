@@ -45,11 +45,13 @@ function getDifficultyColor(difficulte: string): string {
   return colors[base] || '#666';
 }
 
-async function fetchSeancesData(userId: number) {
+async function fetchSeancesData(userId: number, page: number = 1, limit: number = 10) {
   try {
-    // Récupérer les séances de l'utilisateur
+    const offset = (page - 1) * limit;
+    
+    // Récupérer les séances de l'utilisateur avec pagination
     const seancesResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_BDD_SERVICE_URL}/api/seances/user/${userId}`
+      `${process.env.NEXT_PUBLIC_BDD_SERVICE_URL}/api/seances/user/${userId}/paginated?limit=${limit}&offset=${offset}`
     );
     
     if (!seancesResponse.ok) {
@@ -58,6 +60,7 @@ async function fetchSeancesData(userId: number) {
     
     const seancesData = await seancesResponse.json();
     const seances = seancesData.success ? seancesData.data : [];
+    const pagination = seancesData.pagination || { total: 0, hasMore: false };
     
     if (seances.length === 0) {
       return {
@@ -67,6 +70,12 @@ async function fetchSeancesData(userId: number) {
           totalVoies: 0,
           voiesReussies: 0,
           tauxReussite: 0
+        },
+        pagination: {
+          currentPage: page,
+          totalPages: 0,
+          totalItems: 0,
+          hasMore: false
         }
       };
     }
@@ -124,18 +133,21 @@ async function fetchSeancesData(userId: number) {
       acc + (seance.voie?.filter((v: VoieSeance) => v.reussie).length || 0), 0
     );
     
-    // Trier les séances par date (plus récente en premier)
-    const seancesTriees = seancesAvecSalles.sort((a: Seance, b: Seance) => 
-      new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
+    const totalPages = Math.ceil(pagination.total / limit);
     
     return {
-      seances: seancesTriees,
+      seances: seancesAvecSalles,
       stats: {
         totalSeances,
         totalVoies,
         voiesReussies,
         tauxReussite: totalVoies > 0 ? Math.round((voiesReussies / totalVoies) * 100) : 0
+      },
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems: pagination.total,
+        hasMore: pagination.hasMore
       }
     };
   } catch (error) {
@@ -147,6 +159,12 @@ async function fetchSeancesData(userId: number) {
         totalVoies: 0,
         voiesReussies: 0,
         tauxReussite: 0
+      },
+      pagination: {
+        currentPage: 1,
+        totalPages: 0,
+        totalItems: 0,
+        hasMore: false
       }
     };
   }
@@ -157,6 +175,8 @@ export default function SeancesPage() {
   const { userInfo, logout, loading: authLoading } = useAuth();
   const [seancesData, setSeancesData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit] = useState(10); // Nombre de séances par page
 
   // Charger les données des séances
   useEffect(() => {
@@ -168,7 +188,7 @@ export default function SeancesPage() {
       
       setLoading(true);
       try {
-        const data = await fetchSeancesData(userInfo.id);
+        const data = await fetchSeancesData(userInfo.id, currentPage, limit);
         setSeancesData(data);
       } catch (error) {
         console.error("Erreur lors du chargement des séances:", error);
@@ -180,7 +200,7 @@ export default function SeancesPage() {
     if (!authLoading) {
       loadSeancesData();
     }
-  }, [userInfo?.id, authLoading]);
+  }, [userInfo?.id, authLoading, currentPage, limit]);
 
   // Afficher le loader
   if (authLoading || loading) {
@@ -196,6 +216,23 @@ export default function SeancesPage() {
   const handleLogout = () => {
     logout();
     router.push('/' as any);
+  };
+
+  // Fonctions de pagination
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (seancesData?.pagination?.hasMore) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -364,6 +401,63 @@ export default function SeancesPage() {
               >
                 Voir les salles
               </button>
+            </div>
+          )}
+
+          {/* Pagination */}
+          {seancesData?.pagination && seancesData.pagination.totalPages > 1 && (
+            <div className={styles.pagination}>
+              <div className={styles.paginationInfo}>
+                Page {seancesData.pagination.currentPage} sur {seancesData.pagination.totalPages}
+                <span className={styles.paginationTotal}>
+                  ({seancesData.pagination.totalItems} séances au total)
+                </span>
+              </div>
+              
+              <div className={styles.paginationControls}>
+                <button
+                  onClick={handlePreviousPage}
+                  disabled={currentPage === 1}
+                  className={`${styles.paginationButton} ${styles.previous}`}
+                >
+                  ← Précédent
+                </button>
+                
+                <div className={styles.paginationNumbers}>
+                  {Array.from({ length: Math.min(5, seancesData.pagination.totalPages) }, (_, i) => {
+                    let pageNumber;
+                    if (seancesData.pagination.totalPages <= 5) {
+                      pageNumber = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNumber = i + 1;
+                    } else if (currentPage >= seancesData.pagination.totalPages - 2) {
+                      pageNumber = seancesData.pagination.totalPages - 4 + i;
+                    } else {
+                      pageNumber = currentPage - 2 + i;
+                    }
+                    
+                    return (
+                      <button
+                        key={pageNumber}
+                        onClick={() => handlePageChange(pageNumber)}
+                        className={`${styles.paginationNumber} ${
+                          pageNumber === currentPage ? styles.active : ''
+                        }`}
+                      >
+                        {pageNumber}
+                      </button>
+                    );
+                  })}
+                </div>
+                
+                <button
+                  onClick={handleNextPage}
+                  disabled={!seancesData.pagination.hasMore}
+                  className={`${styles.paginationButton} ${styles.next}`}
+                >
+                  Suivant →
+                </button>
+              </div>
             </div>
           )}
 

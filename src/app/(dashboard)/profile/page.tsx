@@ -26,7 +26,7 @@ async function fetchProfileData(userId: number) {
     
     const statsData = await statsResponse.json();
     
-    // Récupérer la dernière séance pour l'activité récente
+    // Récupérer toutes les séances pour compter le total et la dernière activité
     const seancesResponse = await fetch(
       `${process.env.NEXT_PUBLIC_BDD_SERVICE_URL}/api/seances/user/${userId}`
     );
@@ -37,12 +37,16 @@ async function fetchProfileData(userId: number) {
       voies: 0
     };
     
+    let totalSeances = 0;
+    
     if (seancesResponse.ok) {
       const seancesData = await seancesResponse.json();
       if (seancesData.success && seancesData.data && seancesData.data.length > 0) {
-        // Trier par date et prendre la plus récente
+        totalSeances = seancesData.data.length;
+        
+        // Trier par ID décroissant (plus récent en premier) et prendre la plus récente
         const seances = seancesData.data.sort((a: unknown, b: unknown) => 
-          new Date((b as { date: string }).date).getTime() - new Date((a as { date: string }).date).getTime()
+          (b as { id: number }).id - (a as { id: number }).id
         );
         const derniereSeance = seances[0];
         
@@ -79,7 +83,7 @@ async function fetchProfileData(userId: number) {
     return {
       stats: {
         totalAscensions: statsData.data.ascensions || 0,
-        sallesVisitees: statsData.data.sallesVisitees || 0,
+        totalSeances: totalSeances,
         niveauMax: statsData.data.niveauMax || "N/A",
         joursGrimpe: statsData.data.joursGrimpe || 0
       },
@@ -96,7 +100,7 @@ async function fetchProfileData(userId: number) {
     return {
       stats: {
         totalAscensions: 0,
-        sallesVisitees: 0,
+        totalSeances: 0,
         niveauMax: "N/A",
         joursGrimpe: 0
       },
@@ -242,8 +246,8 @@ export default function ProfilePage() {
                 <ProfileStatLabel>Ascensions</ProfileStatLabel>
               </ProfileStat>
               <ProfileStat>
-                <ProfileStatNumber>{profileData?.stats.sallesVisitees || 0}</ProfileStatNumber>
-                <ProfileStatLabel>Salles visitées</ProfileStatLabel>
+                <ProfileStatNumber>{profileData?.stats.totalSeances || 0}</ProfileStatNumber>
+                <ProfileStatLabel>Séances réalisées</ProfileStatLabel>
               </ProfileStat>
               <ProfileStat>
                 <ProfileStatNumber>{profileData?.stats.niveauMax || "N/A"}</ProfileStatNumber>
