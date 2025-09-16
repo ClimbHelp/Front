@@ -38,9 +38,9 @@
 }
 
 .outline {
-  background: transparent;
-  color: #e74c3c;
-  border: 2px solid #e74c3c;
+  background: white;
+  color: #c0392b;
+  border: 2px solid #c0392b;
 }
 
 .outline:hover:not(:disabled) {
