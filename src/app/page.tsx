@@ -27,11 +27,13 @@ export default function HomePage() {
                     </Button>
                   </Link>
                 )}
+              {!userInfo?.premium && (
                 <Link href="/payment">
                   <Button variant="outline" size="lg">
                     Acheter ClimbHelp
                   </Button>
                 </Link>
+              )}
               </div>
             </div>
             <div className={styles.heroImage}>
@@ -99,11 +101,13 @@ export default function HomePage() {
                   </Button>
                 </Link>
               )}
-              <Link href="/payment">
-                <Button variant="outline" size="lg">
-                  Voir les prix
-                </Button>
-              </Link>
+              {!userInfo?.premium && (
+                <Link href="/payment">
+                  <Button variant="outline" size="lg">
+                    Voir les prix
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
         </section>
