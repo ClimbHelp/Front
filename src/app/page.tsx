@@ -2,36 +2,42 @@
 
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
+import { useAuth } from './contexts/AuthContext';
 import styles from './page.module.css';
 
 export default function HomePage() {
+  const { userInfo, loading } = useAuth();
   return (
     <main className={styles.main}>
         {/* Hero Section */}
         <section className={styles.hero}>
-          <div className={styles.heroContent}>
-            <h1 className={styles.heroTitle}>
-              Votre compagnon d&apos;escalade
-            </h1>
-            <p className={styles.heroSubtitle}>
-              Suivez votre progression, découvrez de nouvelles voies et explorez les salles d&apos;escalade
-            </p>
-            <div className={styles.heroActions}>
-              <Link href="/register">
-                <Button variant="primary" size="lg">
-                  Commencer gratuitement
-                </Button>
-              </Link>
-              <Link href="/payment">
-                <Button variant="outline" size="lg">
-                  Acheter ClimbHelp
-                </Button>
-              </Link>
+          <div className={styles.heroCard}>
+            <div className={styles.heroContent}>
+              <h1 className={styles.heroTitle}>
+                Votre compagnon d&apos;escalade
+              </h1>
+              <p className={styles.heroSubtitle}>
+                Suivez votre progression, découvrez de nouvelles voies et explorez les salles d&apos;escalade
+              </p>
+              <div className={styles.heroActions}>
+                {!userInfo && !loading && (
+                  <Link href="/register">
+                    <Button variant="primary" size="lg">
+                      Commencer gratuitement
+                    </Button>
+                  </Link>
+                )}
+                <Link href="/payment">
+                  <Button variant="outline" size="lg">
+                    Acheter ClimbHelp
+                  </Button>
+                </Link>
+              </div>
             </div>
-          </div>
-          <div className={styles.heroImage}>
-            <div className={styles.placeholderImage}>
-              🧗‍♂️
+            <div className={styles.heroImage}>
+              <div className={styles.placeholderImage}>
+                🧗‍♂️
+              </div>
             </div>
           </div>
         </section>
@@ -86,11 +92,13 @@ export default function HomePage() {
             <h2>Prêt à commencer votre aventure ?</h2>
             <p>Rejoignez des milliers de grimpeurs qui utilisent déjà ClimbHelp</p>
             <div className={styles.ctaActions}>
-              <Link href="/register">
-                <Button variant="primary" size="lg">
-                  Créer un compte
-                </Button>
-              </Link>
+              {!userInfo && !loading && (
+                <Link href="/register">
+                  <Button variant="primary" size="lg">
+                    Créer un compte
+                  </Button>
+                </Link>
+              )}
               <Link href="/payment">
                 <Button variant="outline" size="lg">
                   Voir les prix
