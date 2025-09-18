@@ -184,7 +184,6 @@ export default function ProfilePage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/');
   };
 
   const getInitials = (firstName: string, lastName: string) => {

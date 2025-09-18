@@ -35,7 +35,6 @@ export default function Header() {
             <button 
               onClick={() => {
                 logout();
-                router.push('/');
               }} 
               className={styles.logoutButton}
             >

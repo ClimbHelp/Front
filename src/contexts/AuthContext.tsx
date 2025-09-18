@@ -1,6 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface User {
   id: string;
@@ -33,6 +34,7 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     // Vérifier si l'utilisateur est connecté via localStorage
@@ -79,6 +81,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     localStorage.removeItem('authToken');
     localStorage.removeItem('userInfo');
     setUser(null);
+    // Redirection automatique vers la page principale après déconnexion
+    router.push('/');
   };
 
   const isSalleAdmin = (salleAdminId?: number) => {

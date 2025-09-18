@@ -215,7 +215,6 @@ export default function SeancesPage() {
 
   const handleLogout = () => {
     logout();
-    router.push('/' as any);
   };
 
   // Fonctions de pagination
