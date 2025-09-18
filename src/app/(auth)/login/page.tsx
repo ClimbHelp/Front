@@ -154,6 +154,7 @@ function LoginContent() {
               placeholder="votre@email.com"
               required
               disabled={isLoading}
+              autoComplete="email"
             />
           </FormGroup>
           
@@ -166,6 +167,7 @@ function LoginContent() {
               placeholder="Votre mot de passe"
               required
               disabled={isLoading}
+              autoComplete="new-password"
             />
           </FormGroup>
           

@@ -178,6 +178,7 @@ export default function RegisterPage() {
               placeholder="Votre nom d&apos;utilisateur"
               required
               minLength={3}
+              autoComplete="username"
             />
           </FormGroup>
           
@@ -190,6 +191,7 @@ export default function RegisterPage() {
               onChange={handleChange}
               placeholder="votre@email.com"
               required
+              autoComplete="email"
             />
           </FormGroup>
           
@@ -203,6 +205,7 @@ export default function RegisterPage() {
               placeholder="Votre mot de passe"
               required
               minLength={6}
+              autoComplete="new-password"
             />
           </FormGroup>
           
@@ -216,6 +219,7 @@ export default function RegisterPage() {
               placeholder="Confirmez votre mot de passe"
               required
               minLength={6}
+              autoComplete="new-password"
             />
           </FormGroup>
           
